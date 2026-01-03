@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PTAR Nexus | Library Smart Digital Process</title>
+    <title>PTAR Nexus V1 | Library Smart Digital Process</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -121,7 +121,19 @@
           JOURNAL: 'Online Journal'
         };
 
-        // Expanded Data
+        const Genre = {
+            TECH: 'Technology & Computing',
+            BUSINESS: 'Business & Management',
+            FICTION: 'Literature & Fiction',
+            RESEARCH: 'Academic Research',
+            SCIENCE: 'Science & Environment',
+            HISTORY: 'History & Culture'
+        };
+
+        // UiTM Logo URL
+        const UITM_LOGO_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/UiTM_logo.svg/1024px-UiTM_logo.svg.png";
+
+        // Expanded Data with Genres
         const initialResults = [
             {
               id: '1',
@@ -129,6 +141,7 @@
               author: 'Dr. Marlita Mad Yusuf',
               year: 2024,
               type: ResourceType.PHYSICAL,
+              genre: Genre.BUSINESS,
               shelfLocation: 'Level 2, Aisle 4, Shelf B',
               callNumber: 'HD30.2 .M37 2024',
               availability: 'Available',
@@ -140,6 +153,7 @@
               author: 'Mark Twain',
               year: 1884,
               type: ResourceType.EBOOK,
+              genre: Genre.FICTION,
               downloadUrl: '#',
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=2'
@@ -150,6 +164,7 @@
               author: 'Afiq Haiqal',
               year: 2023,
               type: ResourceType.THESIS,
+              genre: Genre.RESEARCH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=3'
             },
@@ -159,6 +174,7 @@
               author: 'Wahdania Ayumie',
               year: 2022,
               type: ResourceType.JOURNAL,
+              genre: Genre.BUSINESS,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=4'
             },
@@ -168,6 +184,7 @@
               author: 'Robert C. Martin',
               year: 2008,
               type: ResourceType.PHYSICAL,
+              genre: Genre.TECH,
               shelfLocation: 'Level 3, Aisle 1, Shelf A',
               callNumber: 'QA76.76 .C65 M37',
               availability: 'On Loan',
@@ -179,6 +196,7 @@
               author: 'Thomas H. Cormen',
               year: 2022,
               type: ResourceType.EBOOK,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=6'
             },
@@ -188,6 +206,7 @@
               author: 'Sarah Doody',
               year: 2023,
               type: ResourceType.JOURNAL,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=7'
             },
@@ -197,6 +216,7 @@
               author: 'Dr. Aminah Binti Ahmad',
               year: 2021,
               type: ResourceType.THESIS,
+              genre: Genre.SCIENCE,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=8'
             },
@@ -206,6 +226,7 @@
               author: 'Andrew S. Tanenbaum',
               year: 2014,
               type: ResourceType.PHYSICAL,
+              genre: Genre.TECH,
               shelfLocation: 'Level 2, Aisle 10, Shelf D',
               callNumber: 'QA76.76 .O63 T36',
               availability: 'Available',
@@ -217,6 +238,7 @@
               author: 'Ian Goodfellow',
               year: 2016,
               type: ResourceType.EBOOK,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=10'
             },
@@ -226,6 +248,7 @@
               author: 'Prof. Jomo K.S.',
               year: 2020,
               type: ResourceType.PHYSICAL,
+              genre: Genre.BUSINESS,
               shelfLocation: 'Level 1, Aisle 2, Shelf F',
               callNumber: 'HC445.5 .J66 2020',
               availability: 'Available',
@@ -237,16 +260,17 @@
               author: 'Tech Journal Weekly',
               year: 2024,
               type: ResourceType.JOURNAL,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=12'
             },
-            // --- NEW ENTRIES ---
             {
               id: '13',
               title: 'The Pragmatic Programmer',
               author: 'Andrew Hunt',
               year: 1999,
               type: ResourceType.EBOOK,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=13'
             },
@@ -256,6 +280,7 @@
               author: 'Stuart Russell',
               year: 2020,
               type: ResourceType.PHYSICAL,
+              genre: Genre.TECH,
               shelfLocation: 'Level 4, Aisle 12',
               callNumber: 'Q335 .R86 2020',
               availability: 'Available',
@@ -267,6 +292,7 @@
               author: 'Nature Publishing Group',
               year: 2024,
               type: ResourceType.JOURNAL,
+              genre: Genre.SCIENCE,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=15'
             },
@@ -276,6 +302,7 @@
               author: 'Erich Gamma',
               year: 1994,
               type: ResourceType.PHYSICAL,
+              genre: Genre.TECH,
               shelfLocation: 'Level 3, Aisle 5',
               callNumber: 'QA76.64 .D47 1994',
               availability: 'Available',
@@ -287,6 +314,7 @@
               author: 'Nurul Hidayah',
               year: 2023,
               type: ResourceType.THESIS,
+              genre: Genre.RESEARCH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=17'
             },
@@ -296,6 +324,7 @@
               author: 'Chris Bernhardt',
               year: 2019,
               type: ResourceType.EBOOK,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=18'
             },
@@ -305,6 +334,7 @@
               author: 'Harvard Business Publishing',
               year: 2023,
               type: ResourceType.JOURNAL,
+              genre: Genre.BUSINESS,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=19'
             },
@@ -314,6 +344,7 @@
               author: 'J.K. Rowling',
               year: 1997,
               type: ResourceType.PHYSICAL,
+              genre: Genre.FICTION,
               shelfLocation: 'Level 1, Fiction Section',
               callNumber: 'PR6068 .O93 H37',
               availability: 'Available',
@@ -325,8 +356,54 @@
               author: 'IEEE Computer Society',
               year: 2024,
               type: ResourceType.JOURNAL,
+              genre: Genre.TECH,
               availability: 'Digital Access',
               coverImage: 'https://picsum.photos/150/220?random=21'
+            },
+            // Additional Books
+            {
+              id: '22',
+              title: 'Sapiens: A Brief History of Humankind',
+              author: 'Yuval Noah Harari',
+              year: 2011,
+              type: ResourceType.EBOOK,
+              genre: Genre.HISTORY,
+              availability: 'Digital Access',
+              coverImage: 'https://picsum.photos/150/220?random=22'
+            },
+            {
+              id: '23',
+              title: 'The Great Gatsby',
+              author: 'F. Scott Fitzgerald',
+              year: 1925,
+              type: ResourceType.PHYSICAL,
+              genre: Genre.FICTION,
+              shelfLocation: 'Level 1, Fiction Section',
+              callNumber: 'PS3511.I9 G7',
+              availability: 'Available',
+              coverImage: 'https://picsum.photos/150/220?random=23'
+            },
+            {
+              id: '24',
+              title: 'Blue Ocean Strategy',
+              author: 'W. Chan Kim',
+              year: 2005,
+              type: ResourceType.PHYSICAL,
+              genre: Genre.BUSINESS,
+              shelfLocation: 'Level 2, Business',
+              callNumber: 'HD30.28 .K56 2005',
+              availability: 'Available',
+              coverImage: 'https://picsum.photos/150/220?random=24'
+            },
+             {
+              id: '25',
+              title: 'Analysis of Malay Manuscripts',
+              author: 'Dr. Fauzi Deraman',
+              year: 2022,
+              type: ResourceType.THESIS,
+              genre: Genre.HISTORY,
+              availability: 'Digital Access',
+              coverImage: 'https://picsum.photos/150/220?random=25'
             }
         ];
 
@@ -374,8 +451,11 @@
                     
                     <div className="relative z-10 w-full max-w-sm md:max-w-md p-6 md:p-8 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl animate-fade-in-up mx-4">
                         <div className="flex flex-col items-center mb-8">
-                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 mb-4">
-                                <i className="fa-solid fa-layer-group text-white text-2xl md:text-3xl"></i>
+                            <div className="flex items-center gap-4 mb-4">
+                                <img src={UITM_LOGO_URL} alt="UiTM Logo" className="h-16 w-auto object-contain" />
+                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                    <i className="fa-solid fa-layer-group text-white text-2xl md:text-3xl"></i>
+                                </div>
                             </div>
                             <h1 className="text-2xl md:text-3xl font-bold text-white tracking-wide">PTAR <span className="text-purple-400">NEXUS</span></h1>
                             <p className="text-gray-400 mt-2 text-sm md:text-base">Sign in to your digital library</p>
@@ -436,11 +516,14 @@
 
             return (
                 <aside className="w-16 md:w-20 lg:w-64 h-full flex flex-col transition-all duration-300 bg-nexus-dark/80 backdrop-blur-xl border-r border-nexus-glassBorder z-20 flex-shrink-0">
-                    <div className="h-20 flex items-center justify-center lg:justify-start lg:px-6 border-b border-nexus-glassBorder">
-                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 flex-shrink-0">
-                            <i className="fa-solid fa-layer-group text-white text-lg md:text-xl"></i>
+                    <div className="h-24 flex flex-col lg:flex-row items-center justify-center lg:justify-start lg:px-6 border-b border-nexus-glassBorder gap-2">
+                        <div className="flex items-center gap-2">
+                             <img src={UITM_LOGO_URL} alt="UiTM" className="h-8 w-auto md:h-10 object-contain" />
+                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 flex-shrink-0">
+                                <i className="fa-solid fa-layer-group text-white text-lg md:text-xl"></i>
+                            </div>
                         </div>
-                        <span className="hidden lg:block ml-3 font-bold text-xl text-white tracking-wide truncate">
+                        <span className="hidden lg:block font-bold text-lg text-white tracking-wide leading-tight">
                             PTAR <span className="text-purple-400">NEXUS</span>
                         </span>
                     </div>
@@ -477,14 +560,14 @@
 
         const Header = ({ user, isOnline, setIsOnline, notifications }) => {
             const [showNotifDropdown, setShowNotifDropdown] = useState(false);
-            const firstName = user.name.split(' ')[0];
+            const fullName = user.name; // Uses Full Name as requested
             const unreadCount = notifications.length;
 
             return (
                 <header className="h-20 px-4 md:px-6 flex items-center justify-between bg-nexus-dark/60 backdrop-blur-md sticky top-0 z-10 border-b border-nexus-glassBorder">
                     <div className="overflow-hidden mr-4">
-                        <h1 className="text-lg md:text-2xl font-bold text-white truncate">
-                            Hi, <span className="text-purple-400">{firstName}</span>
+                        <h1 className="text-lg md:text-xl font-bold text-white truncate">
+                            Hi, <span className="text-purple-400">{fullName}</span>
                         </h1>
                         <p className="text-[10px] md:text-sm text-gray-400 truncate hidden sm:block">{user.department}</p>
                     </div>
@@ -548,110 +631,189 @@
 
         const UnifiedSearch = ({ borrowedBooks, onToggleBorrow }) => {
             const [query, setQuery] = useState('');
+            const [activeType, setActiveType] = useState('ALL'); // ALL, PHYSICAL, EBOOK, THESIS, JOURNAL
             
-            const filteredResults = initialResults.filter(item => 
-                item.title.toLowerCase().includes(query.toLowerCase()) || 
-                item.author.toLowerCase().includes(query.toLowerCase())
-            );
+            // Filter logic
+            const filteredResults = initialResults.filter(item => {
+                const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) || 
+                                     item.author.toLowerCase().includes(query.toLowerCase());
+                
+                let matchesType = true;
+                if (activeType === 'PHYSICAL') matchesType = item.type === ResourceType.PHYSICAL;
+                else if (activeType === 'EBOOK') matchesType = item.type === ResourceType.EBOOK;
+                else if (activeType === 'THESIS') matchesType = item.type === ResourceType.THESIS;
+                else if (activeType === 'JOURNAL') matchesType = item.type === ResourceType.JOURNAL;
+
+                return matchesQuery && matchesType;
+            });
+
+            // Group by Genre for 'ALL' view
+            const groupedResults = {};
+            if (activeType === 'ALL') {
+                Object.values(Genre).forEach(genre => {
+                    const booksInGenre = filteredResults.filter(b => b.genre === genre);
+                    if (booksInGenre.length > 0) {
+                        groupedResults[genre] = booksInGenre;
+                    }
+                });
+            }
+
+            const ResultCard = ({ result }) => {
+                const isBorrowed = borrowedBooks.has(result.id);
+                return (
+                    <div 
+                        className="flex bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group h-full"
+                    >
+                        <div className="w-24 md:w-32 h-auto flex-shrink-0 overflow-hidden relative">
+                            <img 
+                                src={result.coverImage} 
+                                alt={result.title} 
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute top-2 left-2 flex flex-col gap-1">
+                                {result.type === ResourceType.PHYSICAL && (
+                                    <span className="px-2 py-1 bg-amber-500/90 text-black text-[10px] font-bold rounded shadow-md">Physical</span>
+                                )}
+                                {result.type === ResourceType.EBOOK && (
+                                    <span className="px-2 py-1 bg-purple-500/90 text-white text-[10px] font-bold rounded shadow-md">E-Book</span>
+                                )}
+                                {result.type === ResourceType.THESIS && (
+                                    <span className="px-2 py-1 bg-blue-500/90 text-white text-[10px] font-bold rounded shadow-md">Thesis</span>
+                                )}
+                                {result.type === ResourceType.JOURNAL && (
+                                    <span className="px-2 py-1 bg-emerald-500/90 text-white text-[10px] font-bold rounded shadow-md">Journal</span>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className="p-3 md:p-4 flex flex-col justify-between flex-1 min-w-0">
+                            <div>
+                                <div className="text-[10px] text-purple-300 uppercase font-bold tracking-wider mb-1">{result.genre}</div>
+                                <h4 className="text-white font-bold text-sm md:text-base leading-tight mb-1 line-clamp-2">{result.title}</h4>
+                                <p className="text-gray-400 text-xs mb-2 truncate">{result.author} • {result.year}</p>
+                                
+                                {result.type === ResourceType.PHYSICAL ? (
+                                    <div className="flex items-start gap-2 text-xs text-gray-300 bg-white/5 p-2 rounded-lg">
+                                        <i className="fa-solid fa-location-dot mt-1 text-amber-400"></i>
+                                        <div className="overflow-hidden">
+                                            <p className="font-medium text-amber-200 truncate">{result.shelfLocation}</p>
+                                            <p className="text-[10px] opacity-70 truncate">Call No: {result.callNumber}</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 text-xs text-gray-300 bg-white/5 p-2 rounded-lg">
+                                        <i className="fa-solid fa-cloud-arrow-down text-cyan-400"></i>
+                                        <p className="font-medium text-cyan-200">Instant Access</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="mt-3 flex gap-2">
+                                {result.type === ResourceType.PHYSICAL ? (
+                                    <button 
+                                        onClick={() => onToggleBorrow(result)}
+                                        className={`flex-1 py-1.5 px-3 border rounded-lg text-xs font-medium transition-all ${
+                                            isBorrowed 
+                                                ? 'bg-red-500/20 hover:bg-red-500 hover:text-white border-red-500/50 text-red-300' 
+                                                : 'bg-white/10 hover:bg-green-500 hover:text-black border-white/20 text-white'
+                                        }`}
+                                    >
+                                        {isBorrowed ? 'Return' : 'Borrow'}
+                                    </button>
+                                ) : (
+                                    <button className="flex-1 py-1.5 px-3 bg-cyan-600/20 hover:bg-cyan-500 hover:text-black border border-cyan-500/50 text-cyan-300 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-2">
+                                            <i className="fa-regular fa-file-pdf"></i> Download
+                                    </button>
+                                )}
+                                <button className="w-8 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded-lg text-white transition-colors">
+                                    <i className="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const filters = [
+                { id: 'ALL', label: 'All Resources' },
+                { id: 'PHYSICAL', label: 'Books' },
+                { id: 'EBOOK', label: 'E-Books' },
+                { id: 'THESIS', label: 'Theses' },
+                { id: 'JOURNAL', label: 'Journals' },
+            ];
 
             return (
                 <div className="w-full max-w-6xl mx-auto">
-                    {/* Search Input Section */}
-                    <div className="relative mb-6 md:mb-10">
-                        <div className="absolute inset-y-0 left-0 pl-4 md:pl-6 flex items-center pointer-events-none">
-                            <i className="fa-brands fa-google text-xl md:text-2xl text-gray-400"></i>
+                    {/* Search & Filter Section */}
+                    <div className="mb-6 md:mb-8">
+                        <div className="relative mb-6">
+                            <div className="absolute inset-y-0 left-0 pl-4 md:pl-6 flex items-center pointer-events-none">
+                                <i className="fa-brands fa-google text-xl text-gray-400"></i>
+                            </div>
+                            <input
+                                type="text"
+                                className="block w-full pl-12 md:pl-16 pr-6 py-3 md:py-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white/10 transition-all shadow-xl"
+                                placeholder="Search by Title, Author, or Keyword..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                            />
                         </div>
-                        <input
-                            type="text"
-                            className="block w-full pl-12 md:pl-16 pr-6 py-3 md:py-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-base md:text-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white/10 transition-all shadow-2xl"
-                            placeholder="Search Books, Theses, and Journals..."
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                        />
-                        <div className="absolute inset-y-0 right-2 md:right-4 flex items-center">
-                            <button className="p-2 md:p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors">
-                                <i className="fa-solid fa-arrow-right"></i>
-                            </button>
+
+                        {/* Filter Tabs */}
+                        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                            {filters.map(filter => (
+                                <button
+                                    key={filter.id}
+                                    onClick={() => setActiveType(filter.id)}
+                                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
+                                        activeType === filter.id 
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' 
+                                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
+                                    }`}
+                                >
+                                    {filter.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Results Section */}
-                    <h3 className="text-white/80 font-semibold text-base md:text-lg mb-4 md:mb-6 flex items-center">
-                        <i className="fa-solid fa-layer-group mr-2"></i> Search Results ({filteredResults.length})
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
-                        {filteredResults.map((result) => {
-                            const isBorrowed = borrowedBooks.has(result.id);
-                            
-                            return (
-                                <div 
-                                    key={result.id} 
-                                    className="flex bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group"
-                                >
-                                    <div className="w-24 md:w-32 h-auto flex-shrink-0 overflow-hidden relative">
-                                        <img 
-                                            src={result.coverImage} 
-                                            alt={result.title} 
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                        <div className="absolute top-2 left-2">
-                                            {result.type === ResourceType.PHYSICAL && (
-                                                <span className="px-2 py-1 bg-amber-500/90 text-black text-[10px] md:text-xs font-bold rounded shadow-md">Physical</span>
-                                            )}
-                                            {result.type !== ResourceType.PHYSICAL && (
-                                                <span className="px-2 py-1 bg-cyan-500/90 text-black text-[10px] md:text-xs font-bold rounded shadow-md">Digital</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="p-3 md:p-4 flex flex-col justify-between flex-1 min-w-0">
-                                        <div>
-                                            <h4 className="text-white font-bold text-sm md:text-lg leading-tight mb-1 truncate">{result.title}</h4>
-                                            <p className="text-gray-400 text-xs md:text-sm mb-2 md:mb-3 truncate">{result.author} • {result.year}</p>
-                                            
-                                            {result.type === ResourceType.PHYSICAL ? (
-                                                <div className="flex items-start gap-2 text-xs md:text-sm text-gray-300 bg-white/5 p-2 rounded-lg">
-                                                    <i className="fa-solid fa-location-dot mt-1 text-amber-400"></i>
-                                                    <div className="overflow-hidden">
-                                                        <p className="font-medium text-amber-200 truncate">{result.shelfLocation}</p>
-                                                        <p className="text-xs opacity-70 truncate">Call No: {result.callNumber}</p>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300 bg-white/5 p-2 rounded-lg">
-                                                    <i className="fa-solid fa-cloud-arrow-down text-cyan-400"></i>
-                                                    <p className="font-medium text-cyan-200">Instant Access</p>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="mt-3 md:mt-4 flex gap-2 md:gap-3">
-                                            {result.type === ResourceType.PHYSICAL ? (
-                                                <button 
-                                                    onClick={() => onToggleBorrow(result)}
-                                                    className={`flex-1 py-1.5 md:py-2 px-4 border rounded-lg text-xs md:text-sm font-medium transition-all ${
-                                                        isBorrowed 
-                                                            ? 'bg-red-500/20 hover:bg-red-500 hover:text-white border-red-500/50 text-red-300' 
-                                                            : 'bg-white/10 hover:bg-green-500 hover:text-black border-white/20 text-white'
-                                                    }`}
-                                                >
-                                                    {isBorrowed ? 'Return Book' : 'Borrow'}
-                                                </button>
-                                            ) : (
-                                                <button className="flex-1 py-1.5 md:py-2 px-4 bg-cyan-600/20 hover:bg-cyan-500 hover:text-black border border-cyan-500/50 text-cyan-300 rounded-lg text-xs md:text-sm font-medium transition-all flex items-center justify-center gap-2">
-                                                     <i className="fa-regular fa-file-pdf"></i> Download
-                                                </button>
-                                            )}
-                                            <button className="w-8 md:w-10 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded-lg text-white transition-colors">
-                                                <i className="fa-regular fa-heart"></i>
-                                            </button>
-                                        </div>
+                    {/* Results Display */}
+                    {activeType === 'ALL' && !query ? (
+                        // Categorized View (Genres)
+                        <div className="space-y-8">
+                            {Object.entries(groupedResults).map(([genreName, items]) => (
+                                <div key={genreName} className="animate-fade-in">
+                                    <h3 className="text-white/90 font-bold text-lg mb-4 flex items-center gap-2 border-l-4 border-purple-500 pl-3">
+                                        {genreName} <span className="text-gray-500 text-sm font-normal">({items.length})</span>
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                        {items.map(item => (
+                                            <ResultCard key={item.id} result={item} />
+                                        ))}
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        // Flat Grid View (Specific Filter or Search)
+                        <div>
+                             <h3 className="text-white/80 font-semibold text-base mb-4 flex items-center">
+                                <i className="fa-solid fa-layer-group mr-2"></i> 
+                                {query ? `Search Results for "${query}"` : `${filters.find(f => f.id === activeType).label}`} ({filteredResults.length})
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
+                                {filteredResults.map((result) => (
+                                    <ResultCard key={result.id} result={result} />
+                                ))}
+                            </div>
+                            {filteredResults.length === 0 && (
+                                <div className="text-center py-20 text-gray-500">
+                                    <i className="fa-solid fa-book-open text-4xl mb-4 opacity-50"></i>
+                                    <p>No resources found matching your criteria.</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             );
         };
