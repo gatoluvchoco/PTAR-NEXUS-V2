@@ -103,7 +103,7 @@
           "2024229294": "JAYCARLSON WILSON",
           "2024206946": "LUQMAN NURHAKIM OMARSHARIFF",
           "2024419516": "MOHAMAD ZAINORAZIEM BIN ZAINAL",
-          "2024436008": "MOHAMMAD SYAHRIL AZLIE",
+          "2024436008": "MOHammad SYAHRIL AZLIE",
           "2024681454": "MOHD AMIRUL HAFIZ BIN ILAH",
           "2024282012": "MUHAMAD HAZIM AKMAL BIN JAMAN",
           "2024411696": "MUHAMMAD AFIQ HAIQAL BIN MOHD ROSDI",
@@ -449,6 +449,20 @@
             { name: 'Biz', value: 200, color: 'bg-orange-400' },
         ];
 
+        // --- Helper Function for Download ---
+        const handleDownload = (book) => {
+            const content = `PTAR NEXUS LIBRARY\n\nResource: ${book.title}\nAuthor: ${book.author}\nType: ${book.type}\nYear: ${book.year}\n\nThis is a placeholder file confirming that the download functionality is active for this digital resource.`;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${book.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        };
+
         // --- Components ---
 
         const LoginScreen = ({ onLogin }) => {
@@ -461,9 +475,6 @@
                 
                 if (trimmedId && studentDatabase[trimmedId]) {
                     const studentName = studentDatabase[trimmedId];
-                    
-                    // Generate avatar name using First + Second name
-                    // e.g. "ANDRYSHA NYCHELLE ANAK ANDREW" -> "ANDRYSHA+NYCHELLE"
                     const nameParts = studentName.split(' ').filter(part => part.trim() !== '');
                     const initialsName = nameParts.length >= 2 
                         ? `${nameParts[0]}+${nameParts[1]}` 
@@ -472,7 +483,6 @@
                     onLogin({
                         name: studentName,
                         studentId: trimmedId,
-                        // Generate avatar with first+second name for correct initials
                         avatarUrl: `https://ui-avatars.com/api/?name=${initialsName}&background=random&color=fff`,
                         department: 'Faculty of Business Management'
                     });
@@ -506,7 +516,7 @@
                                         value={studentId}
                                         onChange={(e) => {
                                             setStudentId(e.target.value);
-                                            setError(''); // Clear error on typing
+                                            setError('');
                                         }}
                                         className="w-full pl-11 pr-4 py-3 bg-black/20 border border-white/10 rounded-xl text-white focus:outline-none focus:border-purple-500 focus:bg-black/40 transition-all text-sm md:text-base"
                                         placeholder="e.g. 2024441674"
@@ -708,7 +718,10 @@
                                         {isBorrowed ? 'Return Book' : 'Borrow Book'}
                                      </button>
                                  ) : (
-                                     <button className="flex-1 py-3 px-4 rounded-xl font-bold bg-cyan-500/20 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-cyan-500/50 transition-all text-sm flex items-center justify-center gap-2">
+                                     <button 
+                                        onClick={() => handleDownload(book)}
+                                        className="flex-1 py-3 px-4 rounded-xl font-bold bg-cyan-500/20 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-cyan-500/50 transition-all text-sm flex items-center justify-center gap-2"
+                                     >
                                         <i className="fa-regular fa-file-pdf"></i>
                                         Download PDF
                                      </button>
@@ -720,7 +733,7 @@
             )
         };
 
-        const UnifiedSearch = ({ borrowedBooks, onToggleBorrow }) => {
+        const UnifiedSearch = ({ borrowedBooks, onToggleBorrow, likedBooks, onToggleLike }) => {
             const [query, setQuery] = useState('');
             const [activeType, setActiveType] = useState('ALL'); // ALL, PHYSICAL, EBOOK, THESIS, JOURNAL
             const [selectedBook, setSelectedBook] = useState(null);
@@ -752,6 +765,8 @@
 
             const ResultCard = ({ result, onBookClick }) => {
                 const isBorrowed = borrowedBooks.has(result.id);
+                const isLiked = likedBooks.has(result.id);
+
                 return (
                     <div 
                         className="flex flex-row bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group h-full cursor-pointer relative"
@@ -820,14 +835,21 @@
                                     <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
+                                            handleDownload(result);
                                         }}
                                         className="flex-1 py-1.5 px-2 md:px-3 bg-cyan-600/20 hover:bg-cyan-500 hover:text-black border border-cyan-500/50 text-cyan-300 rounded-lg text-[10px] md:text-xs font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                                     >
                                             <i className="fa-regular fa-file-pdf"></i> Download
                                     </button>
                                 )}
-                                <button className="w-8 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded-lg text-white transition-colors">
-                                    <i className="fa-regular fa-heart"></i>
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onToggleLike(result);
+                                    }}
+                                    className={`w-8 flex items-center justify-center rounded-lg transition-colors ${isLiked ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' : 'bg-white/5 hover:bg-white/20 text-white'}`}
+                                >
+                                    <i className={`${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart`}></i>
                                 </button>
                             </div>
                         </div>
@@ -1105,6 +1127,7 @@
             const [isOnline, setIsOnline] = useState(true);
             const [notifications, setNotifications] = useState([]);
             const [borrowedBooks, setBorrowedBooks] = useState(new Set());
+            const [likedBooks, setLikedBooks] = useState(new Set());
 
             const handleLogin = (userData) => {
                 setUser(userData);
@@ -1118,6 +1141,7 @@
                 setActiveTab('dashboard');
                 setNotifications([]);
                 setBorrowedBooks(new Set());
+                setLikedBooks(new Set());
             };
 
             const addNotification = (message) => {
@@ -1139,6 +1163,17 @@
                     addNotification(`You borrowed "${book.title}". Please pick it up at Counter A.`);
                 }
                 setBorrowedBooks(newBorrowed);
+            };
+
+            const toggleLike = (book) => {
+                const newLiked = new Set(likedBooks);
+                if (newLiked.has(book.id)) {
+                    newLiked.delete(book.id);
+                } else {
+                    newLiked.add(book.id);
+                    addNotification(`You liked "${book.title}"`);
+                }
+                setLikedBooks(newLiked);
             };
 
             if (!isLoggedIn) {
@@ -1177,7 +1212,12 @@
                                                 <h2 className="text-xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Search</h2>
                                                 <p className="text-gray-400 text-xs md:text-base">Access all library resources simultaneously.</p>
                                             </div>
-                                            <UnifiedSearch borrowedBooks={borrowedBooks} onToggleBorrow={toggleBorrow} />
+                                            <UnifiedSearch 
+                                                borrowedBooks={borrowedBooks} 
+                                                onToggleBorrow={toggleBorrow} 
+                                                likedBooks={likedBooks}
+                                                onToggleLike={toggleLike}
+                                            />
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
@@ -1196,7 +1236,14 @@
                                     </div>
                                 )}
 
-                                {activeTab === 'search' && <div className="pb-10"><UnifiedSearch borrowedBooks={borrowedBooks} onToggleBorrow={toggleBorrow} /></div>}
+                                {activeTab === 'search' && <div className="pb-10">
+                                    <UnifiedSearch 
+                                        borrowedBooks={borrowedBooks} 
+                                        onToggleBorrow={toggleBorrow}
+                                        likedBooks={likedBooks}
+                                        onToggleLike={toggleLike}
+                                    />
+                                </div>}
                                 {activeTab === 'rooms' && (
                                     <div className="max-w-4xl mx-auto h-full pb-10">
                                         <RoomBooking />
