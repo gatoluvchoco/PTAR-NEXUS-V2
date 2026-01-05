@@ -40,6 +40,7 @@
             animation: {
               'scan': 'scan 2s linear infinite',
               'fade-in': 'fadeIn 0.3s ease-out',
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
               scan: {
@@ -80,7 +81,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useCallback } = React;
 
         // --- Mock Data & Constants ---
         
@@ -123,23 +124,24 @@
         const ResourceType = {
           PHYSICAL: 'Physical Book',
           EBOOK: 'E-Book',
-          THESIS: 'Digital Thesis',
-          JOURNAL: 'Online Journal'
+          THESIS: 'Thesis',
+          JOURNAL: 'Journal',
+          PAPER: 'Exam Paper'
         };
 
         const Genre = {
-            TECH: 'Technology & Computing',
-            BUSINESS: 'Business & Management',
-            FICTION: 'Literature & Fiction',
-            RESEARCH: 'Academic Research',
-            SCIENCE: 'Science & Environment',
-            HISTORY: 'History & Culture'
+            ALL: 'All Resources',
+            TECH: 'Technology',
+            BUSINESS: 'Business',
+            FICTION: 'Fiction',
+            SCIENCE: 'Science',
+            HISTORY: 'History'
         };
 
-        // Expanded Data with Genres and Summaries
-        const initialResults = [
+        // Local Physical Inventory (Shelf items)
+        const localPhysicalInventory = [
             {
-              id: '1',
+              id: 'local_1',
               title: 'Management of Digital Transformation',
               author: 'Dr. Marlita Mad Yusuf',
               year: 2024,
@@ -149,44 +151,10 @@
               callNumber: 'HD30.2 .M37 2024',
               availability: 'Available',
               coverImage: 'https://picsum.photos/150/220?random=1',
-              summary: 'A comprehensive guide on navigating the complexities of digital transformation in modern organizations. This book explores strategic frameworks, leadership roles, and the cultural shifts necessary for successful digitalization in the business sector.'
+              summary: 'A comprehensive guide on navigating the complexities of digital transformation in modern organizations.'
             },
             {
-              id: '2',
-              title: 'The Adventures of Huckleberry Finn',
-              author: 'Mark Twain',
-              year: 1884,
-              type: ResourceType.EBOOK,
-              genre: Genre.FICTION,
-              downloadUrl: '#',
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=2',
-              summary: 'A classic American novel that follows the journey of a young boy named Huck Finn and a runaway slave named Jim as they raft down the Mississippi River. The story offers a scathing satire on entrenched attitudes, particularly racism, of the pre-Civil War South.'
-            },
-            {
-              id: '3',
-              title: 'Impact of AI on Academic Libraries',
-              author: 'Afiq Haiqal',
-              year: 2023,
-              type: ResourceType.THESIS,
-              genre: Genre.RESEARCH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=3',
-              summary: 'This thesis investigates the transformative role of Artificial Intelligence in academic libraries. It analyzes how AI tools are reshaping cataloging, user services, and research assistance, while also addressing the ethical implications of data privacy.'
-            },
-            {
-              id: '4',
-              title: 'Strategic Information Systems Planning',
-              author: 'Wahdania Ayumie',
-              year: 2022,
-              type: ResourceType.JOURNAL,
-              genre: Genre.BUSINESS,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=4',
-              summary: 'An in-depth analysis of methodologies for aligning information systems with business goals. This journal article proposes a new framework for strategic planning that accounts for rapid technological obsolescence and agile business environments.'
-            },
-            {
-              id: '5',
+              id: 'local_5',
               title: 'Clean Code: A Handbook of Agile Software Craftsmanship',
               author: 'Robert C. Martin',
               year: 2008,
@@ -195,44 +163,11 @@
               shelfLocation: 'Level 3, Aisle 1, Shelf A',
               callNumber: 'QA76.76 .C65 M37',
               availability: 'On Loan',
-              coverImage: 'https://picsum.photos/150/220?random=5',
-              summary: 'A must-read for software developers, this book presents best practices for writing clean, maintainable, and readable code. It covers principles such as meaningful naming, function structure, and error handling to improve software quality.'
+              coverImage: 'https://covers.openlibrary.org/b/isbn/9780132350884-M.jpg',
+              summary: 'A must-read for software developers, this book presents best practices for writing clean, maintainable, and readable code.'
             },
             {
-              id: '6',
-              title: 'Introduction to Algorithms',
-              author: 'Thomas H. Cormen',
-              year: 2022,
-              type: ResourceType.EBOOK,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=6',
-              summary: 'The standard textbook for algorithms, covering a broad range of algorithms in depth. It makes their design and analysis accessible to all levels of readers, with self-contained chapters and pseudocode that is easy to understand.'
-            },
-            {
-              id: '7',
-              title: 'User Experience Design for Mobile',
-              author: 'Sarah Doody',
-              year: 2023,
-              type: ResourceType.JOURNAL,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=7',
-              summary: 'This paper explores current trends in mobile UX design, focusing on gesture-based interactions, dark mode implementation, and accessibility standards for diverse user bases in the smartphone era.'
-            },
-            {
-              id: '8',
-              title: 'Sustainable Architecture in Tropics',
-              author: 'Dr. Aminah Binti Ahmad',
-              year: 2021,
-              type: ResourceType.THESIS,
-              genre: Genre.SCIENCE,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=8',
-              summary: 'A research study on passive cooling techniques and sustainable material usage in tropical climates. The thesis provides case studies of energy-efficient buildings in Southeast Asia and proposes new guidelines for green construction.'
-            },
-            {
-              id: '9',
+              id: 'local_9',
               title: 'Modern Operating Systems',
               author: 'Andrew S. Tanenbaum',
               year: 2014,
@@ -241,22 +176,11 @@
               shelfLocation: 'Level 2, Aisle 10, Shelf D',
               callNumber: 'QA76.76 .O63 T36',
               availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=9',
-              summary: 'A detailed look at operating system concepts, including processes, memory management, file systems, and security. This edition includes coverage of the latest developments in cloud computing and virtualization.'
+              coverImage: 'https://covers.openlibrary.org/b/isbn/9780133591620-M.jpg',
+              summary: 'A detailed look at operating system concepts, including processes, memory management, file systems, and security.'
             },
             {
-              id: '10',
-              title: 'Deep Learning',
-              author: 'Ian Goodfellow',
-              year: 2016,
-              type: ResourceType.EBOOK,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=10',
-              summary: 'The definitive textbook on deep learning, covering mathematical foundations, machine learning best practices, and applications in speech recognition, computer vision, and natural language processing.'
-            },
-            {
-              id: '11',
+              id: 'local_11',
               title: 'Malaysian Economy: Past, Present & Future',
               author: 'Prof. Jomo K.S.',
               year: 2020,
@@ -266,32 +190,10 @@
               callNumber: 'HC445.5 .J66 2020',
               availability: 'Available',
               coverImage: 'https://picsum.photos/150/220?random=11',
-              summary: 'An economic analysis of Malaysia\'s development journey. The book examines historical policies, the impact of globalization, and future economic challenges facing the nation in a post-2020 landscape.'
+              summary: 'An economic analysis of Malaysia\'s development journey.'
             },
             {
-              id: '12',
-              title: 'Cybersecurity Trends in 2024',
-              author: 'Tech Journal Weekly',
-              year: 2024,
-              type: ResourceType.JOURNAL,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=12',
-              summary: 'A special report on the emerging threats in the cyber landscape for 2024. Topics include AI-driven phishing attacks, quantum cryptography vulnerabilities, and the rise of ransomware-as-a-service.'
-            },
-            {
-              id: '13',
-              title: 'The Pragmatic Programmer',
-              author: 'Andrew Hunt',
-              year: 1999,
-              type: ResourceType.EBOOK,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=13',
-              summary: 'This classic guide offers practical advice on software development, covering topics such as fighting software rot, avoiding duplication, writing flexible code, and effective testing strategies.'
-            },
-            {
-              id: '14',
+              id: 'local_14',
               title: 'Artificial Intelligence: A Modern Approach',
               author: 'Stuart Russell',
               year: 2020,
@@ -300,68 +202,11 @@
               shelfLocation: 'Level 4, Aisle 12',
               callNumber: 'Q335 .R86 2020',
               availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=14',
-              summary: 'The leading textbook in AI, providing a comprehensive overview of the field. It covers everything from problem-solving and knowledge representation to machine learning and robotics.'
+              coverImage: 'https://covers.openlibrary.org/b/isbn/9780134610993-M.jpg',
+              summary: 'The leading textbook in AI, providing a comprehensive overview of the field.'
             },
             {
-              id: '15',
-              title: 'Nature: International Weekly Journal of Science',
-              author: 'Nature Publishing Group',
-              year: 2024,
-              type: ResourceType.JOURNAL,
-              genre: Genre.SCIENCE,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=15',
-              summary: 'The latest issue of Nature, featuring groundbreaking research in genetics, climate change modeling, and astrophysics. Includes peer-reviewed articles and commentary from leading scientists.'
-            },
-            {
-              id: '16',
-              title: 'Design Patterns: Elements of Reusable Object-Oriented Software',
-              author: 'Erich Gamma',
-              year: 1994,
-              type: ResourceType.PHYSICAL,
-              genre: Genre.TECH,
-              shelfLocation: 'Level 3, Aisle 5',
-              callNumber: 'QA76.64 .D47 1994',
-              availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=16',
-              summary: 'A seminal book cataloging 23 classic software design patterns. It provides solutions to common problems in software design, helping developers create more flexible, elegant, and reusable object-oriented software.'
-            },
-            {
-              id: '17',
-              title: 'Cloud Computing Architectures in Public Sector',
-              author: 'Nurul Hidayah',
-              year: 2023,
-              type: ResourceType.THESIS,
-              genre: Genre.RESEARCH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=17',
-              summary: 'This thesis evaluates the adoption of cloud computing in government agencies. It proposes a hybrid cloud architecture to balance data sovereignty requirements with the scalability benefits of public clouds.'
-            },
-            {
-              id: '18',
-              title: 'Quantum Computing for Everyone',
-              author: 'Chris Bernhardt',
-              year: 2019,
-              type: ResourceType.EBOOK,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=18',
-              summary: 'An accessible introduction to quantum computing. The book explains the basic principles of qubits, entanglement, and quantum algorithms without requiring advanced mathematics.'
-            },
-            {
-              id: '19',
-              title: 'Harvard Business Review',
-              author: 'Harvard Business Publishing',
-              year: 2023,
-              type: ResourceType.JOURNAL,
-              genre: Genre.BUSINESS,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=19',
-              summary: 'The premier magazine for management professionals. This issue focuses on leadership in the era of hybrid work, sustainable business practices, and navigating global economic uncertainty.'
-            },
-            {
-              id: '20',
+              id: 'local_20',
               title: 'Harry Potter and the Philosopher\'s Stone',
               author: 'J.K. Rowling',
               year: 1997,
@@ -370,68 +215,56 @@
               shelfLocation: 'Level 1, Fiction Section',
               callNumber: 'PR6068 .O93 H37',
               availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=20',
-              summary: 'The first novel in the Harry Potter series. It introduces Harry, a young wizard who discovers his magical heritage and attends Hogwarts School of Witchcraft and Wizardry, where he makes friends and faces the dark wizard Voldemort.'
+              coverImage: 'https://covers.openlibrary.org/b/isbn/9780747532743-M.jpg',
+              summary: 'The first novel in the Harry Potter series.'
+            }
+        ];
+
+        // Local PTAR Digital Resources (Thesis, Papers, etc.)
+        const localDigitalInventory = [
+            {
+                id: 'dig_1',
+                title: 'Thesis: Impact of AI on Malaysian SMEs',
+                author: 'Nurul Fatihah (2024223252)',
+                year: 2023,
+                type: ResourceType.THESIS,
+                genre: Genre.BUSINESS,
+                availability: 'PTAR Digital',
+                coverImage: 'placeholder',
+                summary: 'A study on the adoption of Artificial Intelligence in Small and Medium Enterprises in Selangor.'
             },
             {
-              id: '21',
-              title: 'IEEE Transactions on Software Engineering',
-              author: 'IEEE Computer Society',
-              year: 2024,
-              type: ResourceType.JOURNAL,
-              genre: Genre.TECH,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=21',
-              summary: 'A monthly peer-reviewed scientific journal publishing research on the specification, design, development, and maintenance of software systems.'
-            },
-            // Additional Books
-            {
-              id: '22',
-              title: 'Sapiens: A Brief History of Humankind',
-              author: 'Yuval Noah Harari',
-              year: 2011,
-              type: ResourceType.EBOOK,
-              genre: Genre.HISTORY,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=22',
-              summary: 'A thought-provoking survey of the history of our species, Homo sapiens. Harari explores how biology and history have defined us and enhanced our understanding of what it means to be human.'
+                id: 'dig_2',
+                title: 'Past Year Question: ITS555 - Oct 2023',
+                author: 'UiTM Examination Unit',
+                year: 2023,
+                type: ResourceType.PAPER,
+                genre: Genre.TECH,
+                availability: 'PTAR Digital',
+                coverImage: 'placeholder',
+                summary: 'Final Examination Paper for ITS555 Advanced Database Systems.'
             },
             {
-              id: '23',
-              title: 'The Great Gatsby',
-              author: 'F. Scott Fitzgerald',
-              year: 1925,
-              type: ResourceType.PHYSICAL,
-              genre: Genre.FICTION,
-              shelfLocation: 'Level 1, Fiction Section',
-              callNumber: 'PS3511.I9 G7',
-              availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=23',
-              summary: 'A novel set in the Jazz Age on Long Island. It tells the story of the mysterious millionaire Jay Gatsby and his obsession with the beautiful former debutante Daisy Buchanan, exploring themes of decadence and idealism.'
+                id: 'dig_3',
+                title: 'Journal of Computing & Mathematics Vol 12',
+                author: 'UiTM Press',
+                year: 2024,
+                type: ResourceType.JOURNAL,
+                genre: Genre.TECH,
+                availability: 'PTAR Digital',
+                coverImage: 'placeholder',
+                summary: 'Compilation of research papers from the Faculty of Computer and Mathematical Sciences.'
             },
             {
-              id: '24',
-              title: 'Blue Ocean Strategy',
-              author: 'W. Chan Kim',
-              year: 2005,
-              type: ResourceType.PHYSICAL,
-              genre: Genre.BUSINESS,
-              shelfLocation: 'Level 2, Business',
-              callNumber: 'HD30.28 .K56 2005',
-              availability: 'Available',
-              coverImage: 'https://picsum.photos/150/220?random=24',
-              summary: 'A marketing theory that suggests companies are better off searching for ways to gain "uncontested market space" (Blue Oceans) rather than competing with similar companies in existing markets (Red Oceans).'
-            },
-             {
-              id: '25',
-              title: 'Analysis of Malay Manuscripts',
-              author: 'Dr. Fauzi Deraman',
-              year: 2022,
-              type: ResourceType.THESIS,
-              genre: Genre.HISTORY,
-              availability: 'Digital Access',
-              coverImage: 'https://picsum.photos/150/220?random=25',
-              summary: 'A philological and historical analysis of ancient Malay manuscripts preserved in the national archives. The thesis focuses on the evolution of the Jawi script and the cultural contexts of the 18th century.'
+                id: 'dig_4',
+                title: 'Sejarah Kesultanan Melayu Melaka',
+                author: 'Prof. Khoo Kay Kim',
+                year: 2015,
+                type: ResourceType.EBOOK,
+                genre: Genre.HISTORY,
+                availability: 'PTAR Digital',
+                coverImage: 'placeholder',
+                summary: 'A definitive history of the Malacca Sultanate.'
             }
         ];
 
@@ -449,21 +282,125 @@
             { name: 'Biz', value: 200, color: 'bg-orange-400' },
         ];
 
-        // --- Helper Function for Download ---
-        const handleDownload = (book) => {
-            const content = `PTAR NEXUS LIBRARY\n\nResource: ${book.title}\nAuthor: ${book.author}\nType: ${book.type}\nYear: ${book.year}\n\nThis is a placeholder file confirming that the download functionality is active for this digital resource.`;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${book.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`);
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
-        };
-
         // --- Components ---
+        
+        // --- Reader Component for PTAR Online Books ---
+        const BookReader = ({ book, onClose }) => {
+            const [currentPage, setCurrentPage] = useState(1);
+            const totalPages = 15; // Mock total pages
+
+            // Mock content generation based on Genre
+            const getContent = (page) => {
+                if (page === 1) return `
+                    <div class="text-center mt-20">
+                        <h1 class="text-4xl font-bold mb-4">${book.title}</h1>
+                        <p class="text-xl text-gray-500 mb-8">${book.author}</p>
+                        <div class="inline-block px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600">
+                            ${book.genre} • ${book.year}
+                        </div>
+                        <p class="mt-20 text-sm text-gray-400">Published by PTAR Digital Press</p>
+                    </div>
+                `;
+
+                // Generic text content
+                return `
+                    <div class="text-justify leading-relaxed text-lg text-gray-800">
+                        <h3 class="text-xl font-bold mb-4">Chapter ${page - 1}</h3>
+                        <p class="mb-4">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        </p>
+                        <p class="mb-4">
+                            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        </p>
+                        <p class="mb-4">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+                            eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        </p>
+                        <div class="p-4 bg-blue-50 border-l-4 border-blue-500 my-6">
+                            <p class="text-sm italic text-blue-900">
+                                "The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice."
+                            </p>
+                        </div>
+                         <p>
+                            Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos 
+                            qui ratione voluptatem sequi nesciunt.
+                        </p>
+                    </div>
+                `;
+            };
+
+            return (
+                <div className="fixed inset-0 z-[100] bg-slate-900 flex flex-col animate-fade-in">
+                    {/* Reader Toolbar */}
+                    <div className="h-14 bg-slate-800 border-b border-white/10 flex items-center justify-between px-4 shadow-lg flex-shrink-0">
+                        <div className="flex items-center gap-3 text-white overflow-hidden">
+                            <i className="fa-solid fa-book-open text-purple-400"></i>
+                            <span className="font-semibold truncate max-w-[200px] md:max-w-md">{book.title}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                             <div className="hidden md:flex items-center bg-black/30 rounded-lg px-3 py-1 text-sm text-gray-300 gap-2">
+                                <span>Page {currentPage} of {totalPages}</span>
+                             </div>
+                             <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors">
+                                <i className="fa-solid fa-xmark text-lg"></i>
+                             </button>
+                        </div>
+                    </div>
+
+                    {/* Reader Body */}
+                    <div className="flex-1 bg-neutral-200 overflow-y-auto p-4 md:p-8 flex justify-center relative">
+                        {/* Page Container */}
+                        <div className="w-full max-w-3xl bg-white shadow-2xl min-h-[80vh] md:min-h-[120vh] p-8 md:p-16 relative">
+                            <div dangerouslySetInnerHTML={{ __html: getContent(currentPage) }}></div>
+                            
+                            {/* Page Number Footer */}
+                            <div className="absolute bottom-6 left-0 w-full text-center text-xs text-gray-400">
+                                {currentPage}
+                            </div>
+                        </div>
+
+                        {/* Navigation Overlay Arrows (Desktop) */}
+                        <button 
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            className={`fixed left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-all ${currentPage === 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        >
+                            <i className="fa-solid fa-chevron-left"></i>
+                        </button>
+                        
+                        <button 
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            className={`fixed right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70 transition-all ${currentPage === totalPages ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        >
+                            <i className="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    {/* Mobile Footer Controls */}
+                    <div className="md:hidden h-14 bg-slate-800 border-t border-white/10 flex items-center justify-between px-6 text-white">
+                         <button 
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            className="p-2 disabled:opacity-30"
+                        >
+                            <i className="fa-solid fa-chevron-left"></i>
+                         </button>
+                         <span className="text-sm">Page {currentPage} / {totalPages}</span>
+                         <button 
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            className="p-2 disabled:opacity-30"
+                        >
+                            <i className="fa-solid fa-chevron-right"></i>
+                         </button>
+                    </div>
+                </div>
+            );
+        };
 
         const LoginScreen = ({ onLogin }) => {
             const [studentId, setStudentId] = useState('');
@@ -673,7 +610,7 @@
             );
         };
 
-        const BookDetailModal = ({ book, onClose, onToggleBorrow, isBorrowed }) => {
+        const BookDetailModal = ({ book, onClose, onToggleBorrow, isBorrowed, onRead }) => {
             if (!book) return null;
 
             return (
@@ -686,8 +623,14 @@
                         </button>
 
                         {/* Image Section */}
-                        <div className="w-full md:w-1/3 h-48 md:h-auto relative flex-shrink-0">
-                            <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
+                        <div className="w-full md:w-1/3 h-48 md:h-auto relative flex-shrink-0 bg-white/5">
+                             {book.coverImage !== 'placeholder' ? (
+                                <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-500">
+                                    <i className="fa-solid fa-book text-4xl"></i>
+                                </div>
+                            )}
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent md:hidden"></div>
                         </div>
 
@@ -696,7 +639,7 @@
                             <div className="mb-4">
                                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                                      <span className="px-2 py-1 rounded text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">{book.type}</span>
-                                     <span className="px-2 py-1 rounded text-xs font-bold bg-white/10 text-gray-300 border border-white/10">{book.genre}</span>
+                                     <span className="px-2 py-1 rounded text-xs font-bold bg-white/10 text-gray-300 border border-white/10">{book.genre || 'General'}</span>
                                 </div>
                                 <h2 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1">{book.title}</h2>
                                 <p className="text-base text-gray-400">by <span className="text-gray-200">{book.author}</span> <span className="text-gray-600 mx-1">•</span> Published: <span className="text-gray-200">{book.year}</span></p>
@@ -704,7 +647,7 @@
 
                             <div className="flex-1 overflow-y-auto mb-6 pr-2 scrollbar-hide">
                                 <h3 className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Summary</h3>
-                                <p className="text-gray-300 text-sm leading-relaxed">{book.summary}</p>
+                                <p className="text-gray-300 text-sm leading-relaxed">{book.summary || 'No summary available for this title.'}</p>
                             </div>
 
                             <div className="flex gap-3 mt-auto pt-4 border-t border-white/5">
@@ -719,11 +662,11 @@
                                      </button>
                                  ) : (
                                      <button 
-                                        onClick={() => handleDownload(book)}
+                                        onClick={() => onRead(book)}
                                         className="flex-1 py-3 px-4 rounded-xl font-bold bg-cyan-500/20 hover:bg-cyan-500 hover:text-black text-cyan-300 border border-cyan-500/50 transition-all text-sm flex items-center justify-center gap-2"
                                      >
-                                        <i className="fa-regular fa-file-pdf"></i>
-                                        Download PDF
+                                        <i className="fa-solid fa-book-reader"></i>
+                                        Read Now
                                      </button>
                                  )}
                             </div>
@@ -735,61 +678,182 @@
 
         const UnifiedSearch = ({ borrowedBooks, onToggleBorrow, likedBooks, onToggleLike }) => {
             const [query, setQuery] = useState('');
-            const [activeType, setActiveType] = useState('ALL'); // ALL, PHYSICAL, EBOOK, THESIS, JOURNAL
+            const [activeGenre, setActiveGenre] = useState(Genre.ALL); 
+            const [activeSource, setActiveSource] = useState('ALL'); // New State for Source Filter
             const [selectedBook, setSelectedBook] = useState(null);
+            const [readingBook, setReadingBook] = useState(null); // Book currently being read
             
-            // Filter logic
-            const filteredResults = initialResults.filter(item => {
-                const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) || 
-                                     item.author.toLowerCase().includes(query.toLowerCase());
-                
-                let matchesType = true;
-                if (activeType === 'PHYSICAL') matchesType = item.type === ResourceType.PHYSICAL;
-                else if (activeType === 'EBOOK') matchesType = item.type === ResourceType.EBOOK;
-                else if (activeType === 'THESIS') matchesType = item.type === ResourceType.THESIS;
-                else if (activeType === 'JOURNAL') matchesType = item.type === ResourceType.JOURNAL;
+            // API State
+            const [onlineBooks, setOnlineBooks] = useState([]);
+            const [isLoading, setIsLoading] = useState(false);
+            const [apiError, setApiError] = useState('');
 
-                return matchesQuery && matchesType;
+            // Debounce ref
+            const debounceTimeout = useRef(null);
+
+            // Handler for Reading
+            const handleReadBook = (book) => {
+                if (book.availability === 'PTAR Digital') {
+                    // Open Internal Reader for Local Digital Items
+                    setReadingBook(book);
+                    setSelectedBook(null); // Close modal if open
+                } else if (book.key) {
+                    // For Open Library, append /read to key to open the viewer directly
+                    const readUrl = `https://openlibrary.org${book.key}/read`;
+                    window.open(readUrl, '_blank');
+                } else {
+                    alert("Reader not available for this resource.");
+                }
+            };
+
+            // Fetch Open Library Data based on Search Query or Genre Subject
+            const fetchOpenLibrary = async (searchQuery, genre) => {
+                setIsLoading(true);
+                setApiError('');
+                try {
+                    let url = '';
+                    
+                    if (searchQuery) {
+                        // User is searching for something specific
+                        url = `https://openlibrary.org/search.json?q=${encodeURIComponent(searchQuery)}&limit=16`;
+                    } else {
+                        // User is browsing a genre category
+                        let subject = 'university'; // Default "All" fallback
+                        
+                        switch(genre) {
+                            case Genre.TECH: subject = 'computer_science'; break;
+                            case Genre.BUSINESS: subject = 'business_management'; break;
+                            case Genre.FICTION: subject = 'fiction'; break;
+                            case Genre.SCIENCE: subject = 'science'; break;
+                            case Genre.HISTORY: subject = 'history'; break;
+                            default: subject = 'textbooks'; break;
+                        }
+                        url = `https://openlibrary.org/subjects/${subject}.json?limit=16`;
+                    }
+
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    // Handle Subject API vs Search API result structure
+                    let books = [];
+                    if (data.works) { // Subject API returns 'works'
+                        books = data.works;
+                    } else if (data.docs) { // Search API returns 'docs'
+                        books = data.docs;
+                    }
+
+                    if (books.length > 0) {
+                        const formattedBooks = books.map(doc => ({
+                            id: doc.key, 
+                            key: doc.key, 
+                            title: doc.title,
+                            author: doc.authors ? doc.authors[0].name : (doc.author_name ? doc.author_name[0] : 'Unknown Author'),
+                            year: doc.first_publish_year || 'N/A',
+                            type: ResourceType.EBOOK, 
+                            genre: genre === Genre.ALL ? Genre.ALL : genre, // Assign current genre if browsing
+                            availability: 'Digital Access',
+                            coverImage: doc.cover_id 
+                                ? `https://covers.openlibrary.org/b/id/${doc.cover_id}-M.jpg` 
+                                : (doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : 'placeholder'),
+                            summary: 'View full details on Open Library.'
+                        }));
+                        setOnlineBooks(formattedBooks);
+                    } else {
+                        setOnlineBooks([]);
+                    }
+                } catch (err) {
+                    console.error("OpenLibrary API Error:", err);
+                    setApiError("Failed to fetch digital resources. Please check connection.");
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            // Fetch when Active Genre changes (and no search query is active)
+            useEffect(() => {
+                if (!query) {
+                    fetchOpenLibrary('', activeGenre);
+                }
+            }, [activeGenre]);
+
+            // Fetch when Query changes (Debounced)
+            useEffect(() => {
+                if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+                
+                if (query) {
+                     debounceTimeout.current = setTimeout(() => {
+                        fetchOpenLibrary(query, activeGenre);
+                    }, 800);
+                } else {
+                    // Reset to genre browse if query cleared
+                    fetchOpenLibrary('', activeGenre);
+                }
+
+                return () => clearTimeout(debounceTimeout.current);
+            }, [query]);
+
+            
+            // Filter logic (Separated for Grouping)
+            const physicalResults = localPhysicalInventory.filter(item => {
+                const matchesGenre = activeGenre === Genre.ALL || item.genre === activeGenre;
+                const matchesQuery = !query || 
+                                     item.title.toLowerCase().includes(query.toLowerCase()) || 
+                                     item.author.toLowerCase().includes(query.toLowerCase());
+                return matchesGenre && matchesQuery;
             });
 
-            // Group by Genre for 'ALL' view
-            const groupedResults = {};
-            if (activeType === 'ALL') {
-                Object.values(Genre).forEach(genre => {
-                    const booksInGenre = filteredResults.filter(b => b.genre === genre);
-                    if (booksInGenre.length > 0) {
-                        groupedResults[genre] = booksInGenre;
-                    }
-                });
-            }
+            const ptarDigitalResults = localDigitalInventory.filter(item => {
+                const matchesGenre = activeGenre === Genre.ALL || item.genre === activeGenre;
+                const matchesQuery = !query || 
+                                     item.title.toLowerCase().includes(query.toLowerCase()) || 
+                                     item.author.toLowerCase().includes(query.toLowerCase());
+                return matchesGenre && matchesQuery;
+            });
+
+            const openLibraryResults = onlineBooks; // onlineBooks is already updated based on query/genre
+
+            // Calculate total visible results based on active source filter
+            let totalVisible = 0;
+            if (activeSource === 'ALL' || activeSource === 'PHYSICAL') totalVisible += physicalResults.length;
+            if (activeSource === 'ALL' || activeSource === 'PTAR_DIGITAL') totalVisible += ptarDigitalResults.length;
+            if (activeSource === 'ALL' || activeSource === 'OPEN_LIBRARY') totalVisible += openLibraryResults.length;
+
 
             const ResultCard = ({ result, onBookClick }) => {
                 const isBorrowed = borrowedBooks.has(result.id);
                 const isLiked = likedBooks.has(result.id);
+                const isPhysical = result.type === ResourceType.PHYSICAL;
+                const isPtarDigital = result.availability === 'PTAR Digital';
 
                 return (
                     <div 
                         className="flex flex-row bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group h-full cursor-pointer relative"
                         onClick={() => onBookClick(result)}
                     >
-                        <div className="w-24 md:w-32 flex-shrink-0 relative">
-                            <img 
-                                src={result.coverImage} 
-                                alt={result.title} 
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="w-24 md:w-32 flex-shrink-0 relative bg-black/20">
+                            {result.coverImage !== 'placeholder' ? (
+                                <img 
+                                    src={result.coverImage} 
+                                    alt={result.title} 
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-500 bg-white/5">
+                                    <div className="text-center p-2">
+                                        <i className={`fa-solid ${isPhysical ? 'fa-book' : 'fa-laptop-code'} text-2xl mb-1`}></i>
+                                        <div className="text-[9px] uppercase font-bold text-gray-600">{result.type}</div>
+                                    </div>
+                                </div>
+                            )}
+                            
                             <div className="absolute top-2 left-2 flex flex-col gap-1">
-                                {result.type === ResourceType.PHYSICAL && (
+                                {isPhysical ? (
                                     <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-amber-500/90 text-black text-[9px] md:text-[10px] font-bold rounded shadow-md">Physical</span>
-                                )}
-                                {result.type === ResourceType.EBOOK && (
-                                    <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-purple-500/90 text-white text-[9px] md:text-[10px] font-bold rounded shadow-md">E-Book</span>
-                                )}
-                                {result.type === ResourceType.THESIS && (
-                                    <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-blue-500/90 text-white text-[9px] md:text-[10px] font-bold rounded shadow-md">Thesis</span>
-                                )}
-                                {result.type === ResourceType.JOURNAL && (
-                                    <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-emerald-500/90 text-white text-[9px] md:text-[10px] font-bold rounded shadow-md">Journal</span>
+                                ) : isPtarDigital ? (
+                                    <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-purple-500/90 text-white text-[9px] md:text-[10px] font-bold rounded shadow-md">PTAR Online</span>
+                                ) : (
+                                    <span className="px-1.5 py-0.5 md:px-2 md:py-1 bg-cyan-500/90 text-black text-[9px] md:text-[10px] font-bold rounded shadow-md">Open Web</span>
                                 )}
                             </div>
                         </div>
@@ -800,7 +864,7 @@
                                 <h4 className="text-white font-bold text-sm md:text-base leading-tight mb-1 line-clamp-2 group-hover:text-purple-300 transition-colors">{result.title}</h4>
                                 <p className="text-gray-400 text-xs mb-2 truncate">{result.author} • {result.year}</p>
                                 
-                                {result.type === ResourceType.PHYSICAL ? (
+                                {isPhysical ? (
                                     <div className="flex items-start gap-2 text-xs text-gray-300 bg-white/5 p-2 rounded-lg">
                                         <i className="fa-solid fa-location-dot mt-0.5 text-amber-400 flex-shrink-0"></i>
                                         <div className="overflow-hidden min-w-0">
@@ -810,17 +874,19 @@
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 text-xs text-gray-300 bg-white/5 p-2 rounded-lg">
-                                        <i className="fa-solid fa-cloud-arrow-down text-cyan-400 flex-shrink-0"></i>
-                                        <p className="font-medium text-cyan-200 truncate">Instant Access</p>
+                                        {isPtarDigital ? <i className="fa-solid fa-lock text-purple-400 flex-shrink-0"></i> : <i className="fa-solid fa-globe text-cyan-400 flex-shrink-0"></i>}
+                                        <p className={`font-medium truncate ${isPtarDigital ? 'text-purple-200' : 'text-cyan-200'}`}>
+                                            {isPtarDigital ? 'Authorized Student Access' : 'Public Digital Access'}
+                                        </p>
                                     </div>
                                 )}
                             </div>
 
                             <div className="mt-3 flex gap-2">
-                                {result.type === ResourceType.PHYSICAL ? (
+                                {isPhysical ? (
                                     <button 
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent opening modal when clicking action button
+                                            e.stopPropagation(); 
                                             onToggleBorrow(result);
                                         }}
                                         className={`flex-1 py-1.5 px-2 md:px-3 border rounded-lg text-[10px] md:text-xs font-medium transition-all whitespace-nowrap ${
@@ -835,11 +901,15 @@
                                     <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleDownload(result);
+                                            handleReadBook(result);
                                         }}
-                                        className="flex-1 py-1.5 px-2 md:px-3 bg-cyan-600/20 hover:bg-cyan-500 hover:text-black border border-cyan-500/50 text-cyan-300 rounded-lg text-[10px] md:text-xs font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                                        className={`flex-1 py-1.5 px-2 md:px-3 border rounded-lg text-[10px] md:text-xs font-medium transition-all flex items-center justify-center gap-2 whitespace-nowrap ${
+                                             isPtarDigital 
+                                                ? 'bg-purple-600/20 hover:bg-purple-500 hover:text-white border-purple-500/50 text-purple-300' 
+                                                : 'bg-cyan-600/20 hover:bg-cyan-500 hover:text-black border-cyan-500/50 text-cyan-300'
+                                        }`}
                                     >
-                                            <i className="fa-regular fa-file-pdf"></i> Download
+                                            <i className="fa-solid fa-book-reader"></i> {isPtarDigital ? 'View' : 'Read'}
                                     </button>
                                 )}
                                 <button 
@@ -857,86 +927,151 @@
                 );
             };
 
-            const filters = [
-                { id: 'ALL', label: 'All Resources' },
-                { id: 'PHYSICAL', label: 'Books' },
-                { id: 'EBOOK', label: 'E-Books' },
-                { id: 'THESIS', label: 'Theses' },
-                { id: 'JOURNAL', label: 'Journals' },
+            const filters = Object.values(Genre);
+
+            // Source Navigation Data
+            const sourceNav = [
+                { id: 'ALL', label: 'All Sources', icon: 'fa-layer-group', color: 'bg-gray-600' },
+                { id: 'PHYSICAL', label: 'Physical Books', icon: 'fa-book', color: 'bg-amber-600' },
+                { id: 'PTAR_DIGITAL', label: 'UiTM Digital', icon: 'fa-server', color: 'bg-purple-600' },
+                { id: 'OPEN_LIBRARY', label: 'Global Online', icon: 'fa-globe', color: 'bg-cyan-600' },
             ];
 
             return (
                 <div className="w-full max-w-6xl mx-auto relative">
                     {/* Search & Filter Section */}
                     <div className="mb-6 md:mb-8">
+                        {/* Search Input */}
                         <div className="relative mb-4 md:mb-6">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i className="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
+                                <i className={`fa-solid ${isLoading ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'} text-gray-400 text-lg`}></i>
                             </div>
                             <input
                                 type="text"
                                 className="block w-full pl-12 pr-4 py-3 md:py-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-sm md:text-base text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white/10 transition-all shadow-xl"
-                                placeholder="Search by Title, Author, or Keyword..."
+                                placeholder="Search by Title, Author, or Call Number..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                             />
                         </div>
 
-                        {/* Filter Tabs */}
-                        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
-                            {filters.map(filter => (
+                        {/* NEW: Source Navigation Buttons */}
+                        <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
+                            {sourceNav.map(source => (
                                 <button
-                                    key={filter.id}
-                                    onClick={() => setActiveType(filter.id)}
+                                    key={source.id}
+                                    onClick={() => setActiveSource(source.id)}
+                                    className={`flex items-center px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 border ${
+                                        activeSource === source.id 
+                                        ? `${source.color} text-white border-white/20 shadow-lg transform scale-105` 
+                                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border-white/5'
+                                    }`}
+                                >
+                                    <i className={`fa-solid ${source.icon} mr-2`}></i>
+                                    {source.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Genre Tabs */}
+                        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
+                            {filters.map(genre => (
+                                <button
+                                    key={genre}
+                                    onClick={() => setActiveGenre(genre)}
                                     className={`px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
-                                        activeType === filter.id 
+                                        activeGenre === genre 
                                         ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' 
                                         : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
                                     }`}
                                 >
-                                    {filter.label}
+                                    {genre}
                                 </button>
                             ))}
                         </div>
                     </div>
 
                     {/* Results Display */}
-                    {activeType === 'ALL' && !query ? (
-                        // Categorized View (Genres)
-                        <div className="space-y-6 md:space-y-8">
-                            {Object.entries(groupedResults).map(([genreName, items]) => (
-                                <div key={genreName} className="animate-fade-in">
-                                    <h3 className="text-white/90 font-bold text-base md:text-lg mb-3 md:mb-4 flex items-center gap-2 border-l-4 border-purple-500 pl-3">
-                                        {genreName} <span className="text-gray-500 text-xs md:text-sm font-normal">({items.length})</span>
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-4">
-                                        {items.map(item => (
-                                            <ResultCard key={item.id} result={item} onBookClick={setSelectedBook} />
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        // Flat Grid View (Specific Filter or Search)
-                        <div>
-                             <h3 className="text-white/80 font-semibold text-base mb-4 flex items-center">
+                    <div>
+                        <h3 className="text-white/80 font-semibold text-base mb-6 flex items-center justify-between">
+                            <span className="flex items-center">
                                 <i className="fa-solid fa-layer-group mr-2"></i> 
-                                {query ? `Search Results for "${query}"` : `${filters.find(f => f.id === activeType).label}`} ({filteredResults.length})
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6">
-                                {filteredResults.map((result) => (
-                                    <ResultCard key={result.id} result={result} onBookClick={setSelectedBook} />
-                                ))}
+                                {query ? `Results for "${query}"` : `${activeGenre}`}
+                            </span>
+                            <span className="text-xs text-gray-500 font-normal">
+                                {isLoading ? 'Fetching online library...' : `${totalVisible} resources found`}
+                            </span>
+                        </h3>
+
+                        {apiError && (
+                            <div className="p-4 mb-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">
+                                {apiError}
                             </div>
-                            {filteredResults.length === 0 && (
-                                <div className="text-center py-20 text-gray-500">
-                                    <i className="fa-solid fa-book-open text-4xl mb-4 opacity-50"></i>
-                                    <p>No resources found matching your criteria.</p>
+                        )}
+
+                        {/* Section: UiTM Physical Collection */}
+                        {physicalResults.length > 0 && (activeSource === 'ALL' || activeSource === 'PHYSICAL') && (
+                            <div className="mb-8 animate-fade-in">
+                                <div className="flex items-center gap-2 mb-3 px-1">
+                                    <div className="w-1 h-4 bg-amber-500 rounded-full"></div>
+                                    <h4 className="text-amber-400 font-bold text-sm tracking-wide uppercase">UiTM Physical Collection</h4>
+                                    <div className="h-px bg-white/5 flex-1 ml-2"></div>
                                 </div>
-                            )}
-                        </div>
-                    )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6">
+                                    {physicalResults.map((result, idx) => (
+                                        <ResultCard key={result.id || `phy_${idx}`} result={result} onBookClick={setSelectedBook} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Section: UiTM Digital Archive */}
+                        {ptarDigitalResults.length > 0 && (activeSource === 'ALL' || activeSource === 'PTAR_DIGITAL') && (
+                            <div className="mb-8 animate-fade-in">
+                                <div className="flex items-center gap-2 mb-3 px-1">
+                                    <div className="w-1 h-4 bg-purple-500 rounded-full"></div>
+                                    <h4 className="text-purple-400 font-bold text-sm tracking-wide uppercase">UiTM Digital Archive</h4>
+                                    <div className="h-px bg-white/5 flex-1 ml-2"></div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6">
+                                    {ptarDigitalResults.map((result, idx) => (
+                                        <ResultCard key={result.id || `dig_${idx}`} result={result} onBookClick={setSelectedBook} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Section: Open Library Global */}
+                        {((openLibraryResults.length > 0 || isLoading) && (activeSource === 'ALL' || activeSource === 'OPEN_LIBRARY')) && (
+                            <div className="mb-8 animate-fade-in">
+                                <div className="flex items-center gap-2 mb-3 px-1">
+                                    <div className="w-1 h-4 bg-cyan-500 rounded-full"></div>
+                                    <h4 className="text-cyan-400 font-bold text-sm tracking-wide uppercase">Global Online Resources (Open Library)</h4>
+                                    <div className="h-px bg-white/5 flex-1 ml-2"></div>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 md:gap-6">
+                                    {openLibraryResults.map((result, idx) => (
+                                        <ResultCard key={result.id || `ol_${idx}`} result={result} onBookClick={setSelectedBook} />
+                                    ))}
+                                </div>
+                                
+                                {isLoading && (
+                                     <div className="text-center py-10 text-gray-500 w-full col-span-full">
+                                        <i className="fa-solid fa-spinner fa-spin text-2xl mb-2 opacity-50"></i>
+                                        <p className="text-xs">Fetching more from global database...</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        
+                        {!isLoading && totalVisible === 0 && (
+                            <div className="text-center py-20 text-gray-500">
+                                <i className="fa-solid fa-book-open text-4xl mb-4 opacity-50"></i>
+                                <p>No resources found matching your criteria.</p>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Modal */}
                     <BookDetailModal 
@@ -944,7 +1079,13 @@
                         onClose={() => setSelectedBook(null)} 
                         onToggleBorrow={onToggleBorrow}
                         isBorrowed={selectedBook ? borrowedBooks.has(selectedBook.id) : false}
+                        onRead={handleReadBook}
                     />
+
+                    {/* Reader Overlay for PTAR Books */}
+                    {readingBook && (
+                        <BookReader book={readingBook} onClose={() => setReadingBook(null)} />
+                    )}
                 </div>
             );
         };
@@ -1210,7 +1351,7 @@
                                         <div className="w-full">
                                             <div className="mb-2">
                                                 <h2 className="text-xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Search</h2>
-                                                <p className="text-gray-400 text-xs md:text-base">Access all library resources simultaneously.</p>
+                                                <p className="text-gray-400 text-xs md:text-base">Access Open Library & Physical Resources.</p>
                                             </div>
                                             <UnifiedSearch 
                                                 borrowedBooks={borrowedBooks} 
