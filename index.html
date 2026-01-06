@@ -40,7 +40,9 @@
             animation: {
               'scan': 'scan 2s linear infinite',
               'fade-in': 'fadeIn 0.3s ease-out',
+              'slide-up': 'slideUp 0.3s ease-out',
               'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'bounce-slow': 'bounce 3s infinite',
             },
             keyframes: {
               scan: {
@@ -49,6 +51,10 @@
               },
               fadeIn: {
                 '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
@@ -124,9 +130,10 @@
         const ResourceType = {
           PHYSICAL: 'Physical Book',
           EBOOK: 'E-Book',
-          THESIS: 'Thesis',
-          JOURNAL: 'Journal',
-          PAPER: 'Exam Paper'
+          THESIS: 'Thesis (IR)',
+          JOURNAL: 'e-Journal',
+          PAPER: 'Exam Paper (EQPS)',
+          DATABASE: 'Online Database'
         };
 
         const Genre = {
@@ -220,51 +227,104 @@
             }
         ];
 
-        // Local PTAR Digital Resources (Thesis, Papers, etc.)
+        // Local PTAR Digital Resources (Actual Content)
+        // Direct links to actual databases as requested
         const localDigitalInventory = [
             {
-                id: 'dig_1',
-                title: 'Thesis: Impact of AI on Malaysian SMEs',
-                author: 'Nurul Fatihah (2024223252)',
-                year: 2023,
-                type: ResourceType.THESIS,
+                id: 'db_1',
+                title: 'IEEE Xplore Digital Library',
+                author: 'IEEE',
+                year: '2024',
+                type: ResourceType.DATABASE,
+                genre: Genre.TECH,
+                availability: 'PTAR Digital',
+                coverImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/IEEE_logo.svg/1200px-IEEE_logo.svg.png',
+                summary: 'Access to over 5 million documents from IEEE journals, conferences, and standards in electrical engineering, computer science, and electronics.',
+                url: 'https://ieeexplore.ieee.org/'
+            },
+            {
+                id: 'db_2',
+                title: 'ScienceDirect (Elsevier)',
+                author: 'Elsevier',
+                year: '2024',
+                type: ResourceType.DATABASE,
+                genre: Genre.SCIENCE,
+                availability: 'PTAR Digital',
+                coverImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/ScienceDirect_logo.svg/2560px-ScienceDirect_logo.svg.png',
+                summary: 'Leading full-text scientific database offering journal articles and book chapters from more than 2,500 peer-reviewed journals.',
+                url: 'https://www.sciencedirect.com/'
+            },
+            {
+                id: 'db_3',
+                title: 'Emerald Insight',
+                author: 'Emerald Publishing',
+                year: '2024',
+                type: ResourceType.DATABASE,
                 genre: Genre.BUSINESS,
                 availability: 'PTAR Digital',
-                coverImage: 'placeholder',
-                summary: 'A study on the adoption of Artificial Intelligence in Small and Medium Enterprises in Selangor.'
+                coverImage: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/00/Emerald_Publishing.svg/1200px-Emerald_Publishing.svg.png',
+                summary: 'Discover research in business, management, economics, engineering, computing, and social sciences.',
+                url: 'https://www.emerald.com/insight/'
             },
             {
-                id: 'dig_2',
-                title: 'Past Year Question: ITS555 - Oct 2023',
-                author: 'UiTM Examination Unit',
-                year: 2023,
-                type: ResourceType.PAPER,
+                id: 'db_4',
+                title: 'ProQuest Dissertations & Theses',
+                author: 'ProQuest',
+                year: '2024',
+                type: ResourceType.THESIS,
+                genre: Genre.ALL,
+                availability: 'PTAR Digital',
+                coverImage: 'https://upload.wikimedia.org/wikipedia/commons/4/41/ProQuest.svg',
+                summary: 'The world\'s most comprehensive collection of dissertations and theses from around the world.',
+                url: 'https://www.proquest.com/'
+            },
+            {
+                id: 'db_5',
+                title: 'ACM Digital Library',
+                author: 'Association for Computing Machinery',
+                year: '2024',
+                type: ResourceType.DATABASE,
                 genre: Genre.TECH,
                 availability: 'PTAR Digital',
-                coverImage: 'placeholder',
-                summary: 'Final Examination Paper for ITS555 Advanced Database Systems.'
+                coverImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Association_for_Computing_Machinery_%28ACM%29_logo.svg/1200px-Association_for_Computing_Machinery_%28ACM%29_logo.svg.png',
+                summary: 'Comprehensive collection of full-text articles and bibliographic records covering the fields of computing and information technology.',
+                url: 'https://dl.acm.org/'
             },
             {
-                id: 'dig_3',
-                title: 'Journal of Computing & Mathematics Vol 12',
-                author: 'UiTM Press',
-                year: 2024,
-                type: ResourceType.JOURNAL,
-                genre: Genre.TECH,
+                id: 'db_6',
+                title: 'SpringerLink',
+                author: 'Springer Nature',
+                year: '2024',
+                type: ResourceType.DATABASE,
+                genre: Genre.SCIENCE,
                 availability: 'PTAR Digital',
-                coverImage: 'placeholder',
-                summary: 'Compilation of research papers from the Faculty of Computer and Mathematical Sciences.'
+                coverImage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Springer_Nature.svg/1200px-Springer_Nature.svg.png',
+                summary: 'Providing researchers with access to millions of scientific documents from journals, books, series, protocols, reference works and proceedings.',
+                url: 'https://link.springer.com/'
             },
             {
-                id: 'dig_4',
-                title: 'Sejarah Kesultanan Melayu Melaka',
-                author: 'Prof. Khoo Kay Kim',
-                year: 2015,
-                type: ResourceType.EBOOK,
+                id: 'db_7',
+                title: 'BLIS (Bernama Library & Infolink Service)',
+                author: 'Bernama',
+                year: '2024',
+                type: ResourceType.DATABASE,
                 genre: Genre.HISTORY,
                 availability: 'PTAR Digital',
-                coverImage: 'placeholder',
-                summary: 'A definitive history of the Malacca Sultanate.'
+                coverImage: 'https://www.bernama.com/en/images/bernama_logo_v2.png',
+                summary: 'Comprehensive news and information database on Malaysia, including news archives, biographies, and industry reports.',
+                url: 'http://blis.bernama.com/'
+            },
+            {
+                id: 'db_8',
+                title: 'LawNet',
+                author: 'PNMB',
+                year: '2024',
+                type: ResourceType.DATABASE,
+                genre: Genre.BUSINESS,
+                availability: 'PTAR Digital',
+                coverImage: 'https://www.lawnet.com.my/lawnetpublic/images/Lawnet_Logo.png',
+                summary: 'The authoritative source for Malaysian laws, court judgments, and legal information.',
+                url: 'https://www.lawnet.com.my/'
             }
         ];
 
@@ -284,6 +344,305 @@
 
         // --- Components ---
         
+        // --- 1. Chatbot Component (NexusBot) ---
+        const Chatbot = ({ user }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [input, setInput] = useState('');
+            const [messages, setMessages] = useState([
+                { id: 1, text: `Beep boop! Hi ${user ? user.name.split(' ')[0] : 'friend'}! I'm NexusBot. How can I help you today?`, sender: 'bot' }
+            ]);
+            const [isTyping, setIsTyping] = useState(false);
+            const messagesEndRef = useRef(null);
+
+            // NexusBot Avatar URL (Cute Robot)
+            const botAvatar = "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=NexusBot&backgroundColor=b6e3f4&eyes=bulging&mouth=smile01";
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            useEffect(() => {
+                scrollToBottom();
+            }, [messages, isOpen]);
+
+            // Simple Pattern Matching Logic (Simulated AI)
+            const generateResponse = (text) => {
+                const lower = text.toLowerCase();
+                if (lower.includes('hour') || lower.includes('open') || lower.includes('time')) {
+                    return "PTAR is open from 8:00 AM to 10:00 PM on Weekdays, and 9:00 AM to 5:00 PM on Weekends. Beep!";
+                } else if (lower.includes('wifi') || lower.includes('internet')) {
+                    return "To connect to WiFi: Use network 'UiTM-Student'. Your Username is your Student ID, and Password is your iStudent password.";
+                } else if (lower.includes('book') || lower.includes('room')) {
+                    return "You can book discussion rooms using the 'Room Booking' tab in this dashboard. Click 'Book' on an available room.";
+                } else if (lower.includes('fine') || lower.includes('late')) {
+                    return "Fines for late return are RM0.20 per book per day. You can pay fines at the main counter or via UiTM Pay.";
+                } else if (lower.includes('print') || lower.includes('copy')) {
+                    return "Printing services are available at Level 1, IT Corner. Rate is RM0.10 per page (B&W).";
+                } else if (lower.includes('hello') || lower.includes('hi')) {
+                    return "Hello! Beep boop! Is there anything specific you'd like to find today?";
+                } else {
+                    return "I'm still learning! Try asking about 'opening hours', 'booking rooms', 'wifi access', or 'fines'.";
+                }
+            };
+
+            const handleSend = (e) => {
+                e.preventDefault();
+                if (!input.trim()) return;
+
+                const userMsg = { id: Date.now(), text: input, sender: 'user' };
+                setMessages(prev => [...prev, userMsg]);
+                setInput('');
+                setIsTyping(true);
+
+                // Simulate processing delay
+                setTimeout(() => {
+                    const responseText = generateResponse(userMsg.text);
+                    const botMsg = { id: Date.now() + 1, text: responseText, sender: 'bot' };
+                    setMessages(prev => [...prev, botMsg]);
+                    setIsTyping(false);
+                }, 1000);
+            };
+
+            return (
+                <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+                    {/* Chat Window */}
+                    {isOpen && (
+                        <div className="mb-4 w-80 md:w-96 bg-slate-900 border border-white/20 rounded-2xl shadow-2xl overflow-hidden animate-slide-up flex flex-col h-[500px]">
+                            {/* Header */}
+                            <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-4 flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center overflow-hidden border-2 border-white/30">
+                                        <img src={botAvatar} alt="NexusBot" className="w-full h-full object-cover" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-white text-sm">NexusBot</h3>
+                                        <p className="text-[10px] text-cyan-200 flex items-center gap-1">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span> Online
+                                        </p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white transition-colors">
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+
+                            {/* Messages Area */}
+                            <div className="flex-1 bg-nexus-dark/50 p-4 overflow-y-auto scrollbar-hide flex flex-col gap-3">
+                                {messages.map((msg) => (
+                                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[80%] flex items-end gap-2 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                            {/* Avatar for Bot */}
+                                            {msg.sender === 'bot' && (
+                                                <img src={botAvatar} className="w-6 h-6 rounded-full mb-1" alt="Bot" />
+                                            )}
+                                            
+                                            <div className={`p-3 rounded-2xl text-sm leading-relaxed ${
+                                                msg.sender === 'user' 
+                                                ? 'bg-cyan-600 text-white rounded-tr-none' 
+                                                : 'bg-white/10 text-gray-200 rounded-tl-none border border-white/5'
+                                            }`}>
+                                                {msg.text}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {isTyping && (
+                                    <div className="flex justify-start items-end gap-2">
+                                        <img src={botAvatar} className="w-6 h-6 rounded-full mb-1" alt="Bot" />
+                                        <div className="bg-white/10 p-3 rounded-2xl rounded-tl-none border border-white/5 flex gap-1">
+                                            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                                            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                                            <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            {/* Input Area */}
+                            <form onSubmit={handleSend} className="p-3 bg-slate-800 border-t border-white/10 flex gap-2">
+                                <input
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Ask NexusBot..."
+                                    className="flex-1 bg-black/30 border border-white/10 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-cyan-500"
+                                />
+                                <button type="submit" className="w-10 h-10 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center transition-colors">
+                                    <i className="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* Toggle Button */}
+                    <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className={`w-16 h-16 rounded-full shadow-lg shadow-cyan-600/30 flex items-center justify-center transition-all hover:scale-110 overflow-hidden border-2 border-white/20 ${isOpen ? 'bg-red-500 rotate-90' : 'bg-gradient-to-r from-cyan-600 to-blue-500 animate-bounce-slow'}`}
+                    >
+                        {isOpen ? (
+                            <i className="fa-solid fa-xmark text-white text-2xl"></i>
+                        ) : (
+                            <img src={botAvatar} alt="Chat" className="w-full h-full object-cover scale-110" />
+                        )}
+                    </button>
+                </div>
+            );
+        };
+
+        // --- 2. Smart Booking Modal Component ---
+        const BookingModal = ({ room, user, isOpen, onClose, onConfirm }) => {
+            const [selectedDate, setSelectedDate] = useState('');
+            const [selectedTime, setSelectedTime] = useState(null);
+            const [purpose, setPurpose] = useState('Discussion');
+            
+            // Generate Time Slots (09:00 - 17:00)
+            const timeSlots = [
+                '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', 
+                '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'
+            ];
+
+            // Simulate occupied slots randomly when date changes
+            const [occupiedSlots, setOccupiedSlots] = useState([]);
+
+            useEffect(() => {
+                if (isOpen) {
+                    // Reset
+                    setSelectedTime(null);
+                    // Randomly occupy slots
+                    const occupied = timeSlots.filter(() => Math.random() > 0.7);
+                    setOccupiedSlots(occupied);
+                    
+                    // Default to today
+                    const today = new Date().toISOString().split('T')[0];
+                    setSelectedDate(today);
+                }
+            }, [isOpen]);
+
+            const handleDateChange = (e) => {
+                setSelectedDate(e.target.value);
+                // Re-randomize slots to simulate querying DB for that date
+                const occupied = timeSlots.filter(() => Math.random() > 0.6);
+                setOccupiedSlots(occupied);
+                setSelectedTime(null);
+            };
+
+            if (!isOpen || !room) return null;
+
+            return (
+                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}></div>
+                    <div className="relative bg-slate-900 border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl flex flex-col animate-slide-up">
+                        
+                        {/* Header */}
+                        <div className="p-5 border-b border-white/10 flex justify-between items-center bg-slate-800/50 rounded-t-2xl">
+                            <div>
+                                <h3 className="text-xl font-bold text-white">{room.name}</h3>
+                                <p className="text-xs text-gray-400">Capacity: {room.capacity} Pax</p>
+                            </div>
+                            <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 flex items-center justify-center">
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-6 space-y-6">
+                            
+                            {/* User Info (Read Only) */}
+                            <div className="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center text-purple-300">
+                                    <i className="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-400">Booking As</p>
+                                    <p className="text-sm font-bold text-white">{user.name}</p>
+                                    <p className="text-[10px] text-gray-400">{user.studentId}</p>
+                                </div>
+                            </div>
+
+                            {/* Date Selection */}
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-400 mb-2">SELECT DATE</label>
+                                <input 
+                                    type="date" 
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                    className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                />
+                            </div>
+
+                            {/* Time Selection */}
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-400 mb-2">AVAILABLE SLOTS</label>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {timeSlots.map(time => {
+                                        const isOccupied = occupiedSlots.includes(time);
+                                        const isSelected = selectedTime === time;
+                                        return (
+                                            <button
+                                                key={time}
+                                                disabled={isOccupied}
+                                                onClick={() => setSelectedTime(time)}
+                                                className={`py-2 rounded-lg text-xs font-medium transition-all ${
+                                                    isOccupied 
+                                                        ? 'bg-red-500/10 text-red-500/50 cursor-not-allowed border border-transparent'
+                                                        : isSelected
+                                                            ? 'bg-green-500 text-black shadow-lg shadow-green-500/20 scale-105'
+                                                            : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
+                                                }`}
+                                            >
+                                                {time}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                                <p className="text-[10px] text-gray-500 mt-2 text-right">
+                                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>Selected
+                                    <span className="inline-block w-2 h-2 rounded-full bg-white/10 border border-white/10 ml-2 mr-1"></span>Available
+                                    <span className="inline-block w-2 h-2 rounded-full bg-red-900/50 ml-2 mr-1"></span>Occupied
+                                </p>
+                            </div>
+
+                            {/* Purpose */}
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-400 mb-2">PURPOSE</label>
+                                <div className="relative">
+                                    <select 
+                                        value={purpose}
+                                        onChange={(e) => setPurpose(e.target.value)}
+                                        className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 appearance-none"
+                                    >
+                                        <option>Group Discussion</option>
+                                        <option>Study Session</option>
+                                        <option>Project Meeting</option>
+                                        <option>Club Activity</option>
+                                    </select>
+                                    <div className="absolute right-4 top-3.5 text-gray-400 pointer-events-none">
+                                        <i className="fa-solid fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-5 border-t border-white/10 flex gap-3">
+                            <button onClick={onClose} className="flex-1 py-3 rounded-xl text-gray-300 font-medium hover:bg-white/5 transition-colors">
+                                Cancel
+                            </button>
+                            <button 
+                                disabled={!selectedTime || !selectedDate}
+                                onClick={() => onConfirm({ room, date: selectedDate, time: selectedTime, purpose })}
+                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold shadow-lg shadow-purple-900/40 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Confirm Booking
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- Reader Component for PTAR Online Books ---
         const BookReader = ({ book, onClose }) => {
             const [currentPage, setCurrentPage] = useState(1);
@@ -293,12 +652,13 @@
             const getContent = (page) => {
                 if (page === 1) return `
                     <div class="text-center mt-20">
-                        <h1 class="text-4xl font-bold mb-4">${book.title}</h1>
+                        <h1 class="text-3xl md:text-4xl font-bold mb-4">${book.title}</h1>
                         <p class="text-xl text-gray-500 mb-8">${book.author}</p>
                         <div class="inline-block px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600">
                             ${book.genre} • ${book.year}
                         </div>
                         <p class="mt-20 text-sm text-gray-400">Published by PTAR Digital Press</p>
+                        ${book.type === ResourceType.PAPER ? '<p class="mt-4 text-red-500 font-bold uppercase border-2 border-red-500 inline-block px-4 py-1 rotate-[-5deg]">Confidential</p>' : ''}
                     </div>
                 `;
 
@@ -693,6 +1053,11 @@
 
             // Handler for Reading
             const handleReadBook = (book) => {
+                if (book.url) {
+                    window.open(book.url, '_blank');
+                    return;
+                }
+                
                 if (book.availability === 'PTAR Digital') {
                     // Open Internal Reader for Local Digital Items
                     setReadingBook(book);
@@ -1161,7 +1526,7 @@
             );
         };
 
-        const RoomBooking = () => {
+        const RoomBooking = ({ onBookClick }) => {
             return (
                 <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 md:p-6 shadow-xl h-full">
                     <div className="flex justify-between items-center mb-6">
@@ -1189,7 +1554,10 @@
                                 </div>
 
                                 {room.status === 'Available' ? (
-                                    <button className="px-2 py-1 md:px-3 md:py-1.5 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-[10px] md:text-xs font-semibold hover:bg-green-500 hover:text-black transition-all whitespace-nowrap ml-2">
+                                    <button 
+                                        onClick={() => onBookClick(room)}
+                                        className="px-2 py-1 md:px-3 md:py-1.5 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-[10px] md:text-xs font-semibold hover:bg-green-500 hover:text-black transition-all whitespace-nowrap ml-2"
+                                    >
                                         Book
                                     </button>
                                 ) : room.status === 'Occupied' ? (
@@ -1270,6 +1638,10 @@
             const [borrowedBooks, setBorrowedBooks] = useState(new Set());
             const [likedBooks, setLikedBooks] = useState(new Set());
 
+            // Booking State
+            const [bookingModalOpen, setBookingModalOpen] = useState(false);
+            const [selectedRoom, setSelectedRoom] = useState(null);
+
             const handleLogin = (userData) => {
                 setUser(userData);
                 setIsLoggedIn(true);
@@ -1315,6 +1687,18 @@
                     addNotification(`You liked "${book.title}"`);
                 }
                 setLikedBooks(newLiked);
+            };
+
+            // Booking Handlers
+            const handleBookClick = (room) => {
+                setSelectedRoom(room);
+                setBookingModalOpen(true);
+            };
+
+            const handleBookingConfirm = (bookingData) => {
+                setBookingModalOpen(false);
+                addNotification(`Booking Confirmed: ${bookingData.room.name} on ${bookingData.date} at ${bookingData.time}`);
+                setSelectedRoom(null);
             };
 
             if (!isLoggedIn) {
@@ -1367,7 +1751,7 @@
                                             </div>
 
                                             <div className="md:col-span-7 lg:col-span-5">
-                                                <RoomBooking />
+                                                <RoomBooking onBookClick={handleBookClick} />
                                             </div>
 
                                             <div className="md:col-span-12 lg:col-span-4">
@@ -1387,7 +1771,7 @@
                                 </div>}
                                 {activeTab === 'rooms' && (
                                     <div className="max-w-4xl mx-auto h-full pb-10">
-                                        <RoomBooking />
+                                        <RoomBooking onBookClick={handleBookClick} />
                                     </div>
                                 )}
                                 {activeTab === 'digital-id' && (
@@ -1401,6 +1785,18 @@
                                     </div>
                                 )}
                             </div>
+
+                            {/* Global Chatbot */}
+                            <Chatbot user={user} />
+
+                            {/* Global Booking Modal */}
+                            <BookingModal 
+                                isOpen={bookingModalOpen} 
+                                room={selectedRoom} 
+                                user={user}
+                                onClose={() => setBookingModalOpen(false)}
+                                onConfirm={handleBookingConfirm}
+                            />
                         </main>
                     </div>
                 </div>
