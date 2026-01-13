@@ -177,7 +177,7 @@
             "2024299304": "LORIA MANYIE ANAK NAWONG",
             "2024206946": "LUQMAN NURHAKIM OMARSHARIFF",
             "2024419516": "MOHAMAD ZAINORAZIEM BIN ZAINAL",
-            "2024436008": "MOHammad SYAHRIL AZLIE",
+            "2024436008": "MOHAMMAD SYAHRIL AZLIE",
             "2024681454": "MOHD AMIRUL HAFIZ BIN ILAH",
             "2024282012": "MUHAMAD HAZIM AKMAL BIN JAMAN",
             "2024411696": "MUHAMMAD AFIQ HAIQAL BIN MOHD ROSDI",
@@ -360,7 +360,7 @@
             );
         };
 
-        // 2. ResultCard
+        // 2. ResultCard - No Changes
         const ResultCard = ({ result, isBorrowed, onBookClick, onToggleBorrow, onRead, idx }) => {
             const isPhysical = result.type === ResourceType.PHYSICAL;
             let badgeText = '';
@@ -383,7 +383,6 @@
                 <div 
                     className="flex bg-white dark:bg-[#1e2030] border border-gray-200 dark:border-white/5 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all cursor-pointer group h-36 md:h-44 hover:shadow-lg hover:shadow-purple-900/10 hover:-translate-y-1" 
                     onClick={() => {
-                        // Direct open for GLOBAL resources if clicked on card body
                         if(result.source === SourceCategory.GLOBAL && result.url) {
                             window.open(result.url, '_blank');
                         } else {
@@ -413,7 +412,6 @@
                             ) : (
                                 <button onClick={(e) => { 
                                     e.stopPropagation(); 
-                                    // Direct open for Read button
                                     if(result.url) {
                                         window.open(result.url, '_blank');
                                     } else {
@@ -430,18 +428,13 @@
             );
         };
 
-        // 3. DigitalID Widget
+        // 3. DigitalID Widget - No Changes
         const DigitalIDWidget = ({ user, onScan, enableScan = true }) => {
             const [isFlipped, setIsFlipped] = useState(false);
             const [isScanning, setIsScanning] = useState(false);
 
             const handleCardClick = () => {
-                // STRICT LOGIC: If scan is disabled (Dashboard mode), explicitly DO NOTHING.
-                if (!enableScan) {
-                    return;
-                }
-                
-                // Otherwise, flip the card (My Digital ID mode)
+                if (!enableScan) return;
                 setIsFlipped(!isFlipped);
             }
 
@@ -457,20 +450,15 @@
 
             return (
                 <div className="h-full flex flex-col gap-4 animate-fade-in">
-                    {/* Access Card Container - Removed group class when not active to prevent hover effects */}
                     <div 
                         className={`relative flex-1 rounded-3xl perspective-1000 ${enableScan ? 'cursor-pointer group' : 'cursor-default'}`}
                         onClick={enableScan ? handleCardClick : undefined}
                     >
                         <div className={`relative w-full h-full transition-all duration-700 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                            
                             {/* FRONT: Purple Digital Card */}
                             <div className="absolute inset-0 backface-hidden w-full h-full rounded-3xl bg-gradient-to-br from-purple-700 via-indigo-800 to-purple-900 border border-white/10 shadow-2xl p-6 flex flex-col justify-between overflow-hidden">
-                                {/* Decorative Glows */}
                                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/30 blur-3xl rounded-full"></div>
                                 <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
-
-                                {/* Header */}
                                 <div className="flex items-center gap-3 relative z-10">
                                     <div className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
                                         <i className="fa-solid fa-layer-group text-white text-lg"></i>
@@ -480,8 +468,6 @@
                                         <p className="text-white/60 text-[10px] tracking-wider uppercase">Digital Access Card</p>
                                     </div>
                                 </div>
-
-                                {/* User Info */}
                                 <div className="flex items-center gap-4 relative z-10 mt-2">
                                     <div className="w-16 h-16 rounded-2xl bg-purple-300/20 backdrop-blur-md flex items-center justify-center text-2xl font-bold text-white border border-white/10 overflow-hidden">
                                         {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full object-cover" /> : user.name.charAt(0)}
@@ -494,14 +480,11 @@
                                         </span>
                                     </div>
                                 </div>
-
-                                {/* Footer */}
                                 <div className="flex justify-between items-end relative z-10 mt-4">
                                     <div>
                                         <p className="text-white/40 text-[9px] uppercase font-bold mb-0.5">Faculty</p>
                                         <p className="text-white text-xs font-medium max-w-[180px] leading-tight">{user.department}</p>
                                     </div>
-                                    {/* Scan feature only if enabled */}
                                     <div className="text-right">
                                         {enableScan && (
                                             <>
@@ -512,26 +495,18 @@
                                     </div>
                                 </div>
                             </div>
-
-                            {/* BACK: QR Code / Entry Pass */}
+                            {/* BACK: QR Code */}
                             <div className="absolute inset-0 backface-hidden rotate-y-180 w-full h-full rounded-3xl bg-slate-100 dark:bg-white border border-gray-200 shadow-2xl p-6 flex flex-col items-center justify-center text-center">
                                 <h3 className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-4">Library Entry Pass</h3>
-                                
-                                {/* QR Code Area */}
                                 <div 
                                     onClick={handleScan}
                                     className={`relative p-2 bg-white rounded-xl shadow-sm border border-gray-100 transition-transform active:scale-95 overflow-hidden ${isScanning ? 'ring-4 ring-purple-500/30' : (enableScan ? 'hover:scale-105' : '')}`}
                                 >
                                     <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${user.studentId}`} className={`w-28 h-28 ${isScanning ? 'opacity-30 blur-[1px]' : ''}`} />
-                                    
-                                    {/* Scanning Animation Overlay */}
                                     {isScanning && (
                                         <div className="absolute inset-0 z-10">
-                                            {/* Moving Scanner Line */}
                                             <div className="absolute top-0 left-0 w-full h-[3px] bg-red-500 shadow-[0_0_15px_rgba(239,68,68,1)] animate-scan z-20"></div>
-                                            {/* Scanner Field Effect */}
                                             <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 to-transparent animate-scan" style={{animationDuration: '2s'}}></div>
-                                            
                                             <div className="absolute inset-0 flex items-center justify-center z-30">
                                                 <i className="fa-solid fa-spinner fa-spin text-purple-600 text-2xl drop-shadow-md"></i>
                                             </div>
@@ -539,7 +514,6 @@
                                     )}
                                 </div>
                                 <p className="text-[9px] text-purple-500 font-bold mt-2 animate-pulse">{isScanning ? 'Scanning...' : 'Scan at The Library Kiosk'}</p>
-
                                 <div className="mt-2 px-4 py-2 bg-slate-100 rounded-lg border border-slate-200">
                                     <p className="font-mono text-slate-800 font-bold text-lg tracking-wider">{user.studentId}</p>
                                 </div>
@@ -550,7 +524,6 @@
                                      </button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -580,17 +553,14 @@
                                         {room.status === 'Available' ? 'AVAILABLE' : 'OCCUPIED'}
                                     </span>
                                 </div>
-                                
                                 <div className="mb-3">
                                     <h4 className="text-white font-bold text-sm mb-0.5">{room.name}</h4>
                                     <p className="text-slate-500 text-[10px]">{room.capacity} Pax Capacity</p>
                                 </div>
-                                
                                 <div className="flex items-center gap-1.5 text-slate-400 border-t border-white/5 pt-2 mt-auto">
                                     <i className="fa-regular fa-clock text-[10px]"></i>
                                     <span className="text-[9px]">{room.status === 'Available' ? 'Ready for booking' : 'Next: 9:00 AM'}</span>
                                 </div>
-                                
                                 <button 
                                     onClick={() => onBookClick(room)}
                                     className="absolute inset-0 w-full h-full cursor-pointer z-10"
@@ -605,10 +575,10 @@
         // 5. Analytics Widget
         const AnalyticsWidget = () => {
             const data = [
-                { label: 'Sci-Fi', val: 474, color: 'bg-[#a855f7]', h: 'h-24' },  // Purple
-                { label: 'History', val: 543, color: 'bg-[#22c55e]', h: 'h-28' }, // Green
-                { label: 'Tech', val: 355, color: 'bg-[#eab308]', h: 'h-16' },    // Yellow
-                { label: 'Biz', val: 178, color: 'bg-[#f97316]', h: 'h-8' }       // Orange
+                { label: 'Sci-Fi', val: 474, color: 'bg-[#a855f7]', h: 'h-24' },
+                { label: 'History', val: 543, color: 'bg-[#22c55e]', h: 'h-28' },
+                { label: 'Tech', val: 355, color: 'bg-[#eab308]', h: 'h-16' },
+                { label: 'Biz', val: 178, color: 'bg-[#f97316]', h: 'h-8' }
             ];
 
             return (
@@ -624,7 +594,6 @@
                             </div>
                         ))}
                     </div>
-                    
                     <div className="border-t border-white/5 pt-4">
                         <div className="flex justify-between items-center mb-1">
                             <span className="text-slate-400 text-[10px] font-bold">Monthly Target</span>
@@ -785,14 +754,13 @@
             );
         };
 
-        // 7. Borrow and Return Section Modal (REFACTORED to fix static flag error)
+        // 7. BorrowReturnModal - No Changes
         const BorrowReturnModal = ({ book, isOpen, onClose, onBorrow, onReturn, onRenew, isBorrowed, borrowedDetails, user, addNotification }) => {
             const [courseCode, setCourseCode] = useState('');
             const [returnDate, setReturnDate] = useState(getISODate(7));
             const [showFinePayment, setShowFinePayment] = useState(false);
             const [simulateLate, setSimulateLate] = useState(false); // For demo purposes
 
-            // Sync effect
             useEffect(() => {
                 if (isOpen && book) {
                     if (isBorrowed && borrowedDetails) {
@@ -802,7 +770,6 @@
                         setCourseCode('');
                         setReturnDate(getISODate(7));
                     }
-                    // Reset states on open
                     setShowFinePayment(false);
                     setSimulateLate(false);
                 }
@@ -825,8 +792,6 @@
                 const today = getISODate();
                 const dueDate = borrowedDetails?.dueDate || today;
                 
-                // Logic: If dueDate is strictly BEFORE today, it is late.
-                // We also allow manual simulation via checkbox for demo.
                 if ((new Date(dueDate) < new Date(today)) || simulateLate) {
                     setShowFinePayment(true);
                 } else {
@@ -835,7 +800,6 @@
             };
             
             const handleFinePayment = () => {
-                // Simulate payment processing
                 setTimeout(() => {
                     addNotification("Fine of RM 10.00 paid successfully.");
                     onReturn(book);
@@ -847,7 +811,6 @@
                     <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
                     <div className="relative bg-white dark:bg-[#181926] border border-gray-200 dark:border-white/10 rounded-2xl w-full max-w-lg shadow-2xl p-6 animate-scale-in max-h-[90vh] overflow-y-auto">
                         
-                        {/* FINE PAYMENT OVERLAY */}
                         {showFinePayment ? (
                             <div className="flex flex-col items-center justify-center text-center animate-scale-in">
                                 <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center text-red-500 mb-4 animate-pulse-slow">
@@ -956,7 +919,6 @@
                                         </div>
 
                                         <div className="flex flex-col gap-2 pt-2">
-                                            {/* DEMO TOGGLE FOR LATE RETURN */}
                                             <div className="flex items-center gap-2 mb-2 justify-end">
                                                 <label className="text-[10px] text-slate-400 cursor-pointer select-none">Simulate Late Return (Demo)</label>
                                                 <input type="checkbox" checked={simulateLate} onChange={(e) => setSimulateLate(e.target.checked)} className="accent-purple-600" />
@@ -973,7 +935,7 @@
             );
         };
 
-        // 8. Booking Detail Modal
+        // 8. BookingDetailModal - No Changes
         const BookingDetailModal = ({ room, user, isOpen, onClose, onConfirm }) => {
             if (!isOpen || !room) return null;
             const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"];
@@ -996,7 +958,6 @@
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
-
                         <div className="p-6 space-y-6">
                             <div className="bg-[#232433] rounded-xl p-4 flex items-center gap-4 border border-white/5">
                                 <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -1008,7 +969,6 @@
                                     <p className="text-slate-500 text-[10px] font-mono">{user?.studentId}</p>
                                 </div>
                             </div>
-
                             <div>
                                 <label className="text-[10px] text-slate-400 font-bold uppercase block mb-2">Select Date</label>
                                 <div className="relative">
@@ -1020,7 +980,6 @@
                                     />
                                 </div>
                             </div>
-
                             <div>
                                 <label className="text-[10px] text-slate-400 font-bold uppercase block mb-2">Available Slots</label>
                                 <div className="grid grid-cols-4 gap-2">
@@ -1036,7 +995,6 @@
                                         } else {
                                             btnClass += "bg-[#232433] text-slate-400 border-white/5 hover:border-white/20 hover:text-white";
                                         }
-
                                         return (
                                             <button 
                                                 key={slot} 
@@ -1055,7 +1013,6 @@
                                     <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-red-500"></div><span className="text-[9px] text-slate-400">Occupied</span></div>
                                 </div>
                             </div>
-
                             <div>
                                 <label className="text-[10px] text-slate-400 font-bold uppercase block mb-2">Purpose</label>
                                 <div className="relative">
@@ -1074,20 +1031,17 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                         <div className="p-6 pt-0 flex gap-4 mt-2">
                             <button onClick={onClose} className="flex-1 py-3 text-sm font-bold text-white hover:text-slate-300 transition-colors">Cancel</button>
                             <button onClick={() => onConfirm(room, selectedSlot)} className="flex-1 py-3 rounded-xl bg-[#7c3aed] hover:bg-[#6d28d9] text-white font-bold text-sm shadow-lg shadow-purple-900/40 transition-all">Confirm Booking</button>
                         </div>
-
                     </div>
                 </div>
             );
         };
         
-        // 9. Feedback Detail Modal
+        // 9. FeedbackModal - No Changes
         const FeedbackModal = ({ isOpen, onClose, onSubmit }) => {
             if (!isOpen) return null;
             const [type, setType] = useState('Bug Report');
@@ -1127,8 +1081,8 @@
             );
         };
 
-        // 10. Profile Modal - UPDATED HISTORY
-        const ProfileModal = ({ user, isOpen, onClose, totalFines, onPayFines }) => {
+        // 10. Profile Modal - UPDATED HISTORY and LECTURER VIEW
+        const ProfileModal = ({ user, isOpen, onClose, totalFines, onPayFines, allStudentFines }) => {
             if(!isOpen) return null;
             const [isPaying, setIsPaying] = useState(false);
 
@@ -1156,7 +1110,7 @@
                         </div>
                         <div className="flex-1 p-8 overflow-y-auto">
                              <div className="mb-8">
-                                <h4 className="text-slate-800 dark:text-white font-bold mb-4 uppercase tracking-wider text-xs border-b border-gray-200 dark:border-white/10 pb-2">Student Details</h4>
+                                <h4 className="text-slate-800 dark:text-white font-bold mb-4 uppercase tracking-wider text-xs border-b border-gray-200 dark:border-white/10 pb-2">User Details</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div><p className="text-[10px] text-slate-500 uppercase">Department</p><p className="text-sm text-slate-700 dark:text-white">{user.department}</p></div>
                                     <div><p className="text-[10px] text-slate-500 uppercase">Semester</p><p className="text-sm text-slate-700 dark:text-white">03</p></div>
@@ -1194,12 +1148,39 @@
                                     </div>
                                  </div>
                              )}
+
+                             {/* Lecturer View: Student Fines Overview */}
+                             {user.role === 'Lecturer' && (
+                                <div className="mb-8">
+                                    <h4 className="text-slate-800 dark:text-white font-bold mb-4 uppercase tracking-wider text-xs border-b border-gray-200 dark:border-white/10 pb-2">Student Financial Overview</h4>
+                                    <div className="bg-slate-50 dark:bg-[#232433] rounded-xl overflow-hidden border border-gray-200 dark:border-white/5 max-h-48 overflow-y-auto scrollbar-hide">
+                                        {Object.entries(allStudentFines)
+                                            .filter(([id, amount]) => amount > 0)
+                                            .map(([id, amount]) => (
+                                                <div key={id} className="flex justify-between items-center p-3 border-b border-gray-200 dark:border-white/5 last:border-0 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
+                                                     <div>
+                                                         <p className="text-xs font-bold text-slate-800 dark:text-white line-clamp-1 w-40">{studentDatabase[id] || id}</p>
+                                                         <p className="text-[10px] text-slate-500 font-mono">{id}</p>
+                                                     </div>
+                                                     <div className="flex items-center gap-3">
+                                                         <span className="text-red-500 font-mono font-bold text-xs">RM {amount.toFixed(2)}</span>
+                                                         <button className="text-[10px] px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 rounded hover:bg-purple-200 transition-colors">
+                                                            Remind
+                                                         </button>
+                                                     </div>
+                                                </div>
+                                            ))}
+                                         {Object.entries(allStudentFines).filter(([id, amount]) => amount > 0).length === 0 && (
+                                             <div className="p-4 text-center text-xs text-slate-500">No outstanding fines record.</div>
+                                         )}
+                                    </div>
+                                </div>
+                             )}
                              
-                             {/* Recent History Section - UPDATED */}
+                             {/* Recent History Section */}
                              <div>
                                 <h4 className="text-slate-800 dark:text-white font-bold mb-4 uppercase tracking-wider text-xs border-b border-gray-200 dark:border-white/10 pb-2">Activity History</h4>
                                 <div className="space-y-3">
-                                    {/* Borrowing Activity */}
                                     <div className="flex justify-between items-center text-sm p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/5">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500">
@@ -1213,7 +1194,6 @@
                                         <span className="text-[10px] text-slate-500">Today</span>
                                     </div>
 
-                                    {/* Returns Activity */}
                                     <div className="flex justify-between items-center text-sm p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/5">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
@@ -1226,20 +1206,6 @@
                                         </div>
                                         <span className="text-[10px] text-slate-500">Yesterday</span>
                                     </div>
-
-                                    {/* Reading Activity */}
-                                    <div className="flex justify-between items-center text-sm p-3 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/5">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-500">
-                                                <i className="fa-solid fa-book-open-reader text-xs"></i>
-                                            </div>
-                                            <div>
-                                                <span className="text-slate-500 dark:text-slate-400 text-xs block font-bold uppercase">Reading</span>
-                                                <span className="text-slate-800 dark:text-white text-xs">HBR: Digital Transformation</span>
-                                            </div>
-                                        </div>
-                                        <span className="text-[10px] text-slate-500">3 Days ago</span>
-                                    </div>
                                 </div>
                              </div>
 
@@ -1250,52 +1216,35 @@
             );
         };
 
-        // 11. Chatbot Widget
+        // 11. Chatbot Widget - No Changes
         const ChatbotWidget = () => {
              const [isOpen, setIsOpen] = useState(false);
              const [messages, setMessages] = useState([{text: "Hello! How can I help you today?", from: 'bot'}]);
              const [input, setInput] = useState("");
              
-             // --- CHATBOT KNOWLEDGE BASE ---
              const generateResponse = (text) => {
                 const lower = text.toLowerCase();
-                
-                // Greeting
                 if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
                     return "Hello there! Welcome to PTAR Nexus. I can help you with searching books, room bookings, and checking your fine status.";
                 }
-                
-                // Search / Finding Books
                 if (lower.includes('search') || lower.includes('find') || lower.includes('book') || lower.includes('resource') || lower.includes('journal')) {
                     return "To find books or journals, simply go to the 'Search' tab. You can find both physical copies located in the library and online digital resources from IEEE, ScienceDirect, and more.";
                 }
-                
-                // Room Booking
                 if (lower.includes('room') || lower.includes('book') || lower.includes('discussion') || lower.includes('studio')) {
                     return "You can book discussion rooms or the studio in the 'Room Booking' tab. Currently, we have 4 Discussion Rooms and 1 Studio Room available. You can see live occupancy on the Dashboard.";
                 }
-                
-                // Digital ID / Access Card
                 if (lower.includes('id') || lower.includes('card') || lower.includes('scan') || lower.includes('access')) {
                     return "Your Digital ID is located in the 'My Digital ID' tab. Click the card to flip it and reveal your QR code for scanning at the library entrance kiosks.";
                 }
-                
-                // Fines / Late Return / Payment
                 if (lower.includes('fine') || lower.includes('pay') || lower.includes('late') || lower.includes('return') || lower.includes('rm')) {
                     return "If you return a book late, there is a fixed fine of RM 10.00. Don't worry, you can pay this fine directly through the app when you process the return in your profile or book details.";
                 }
-                
-                // Operating Hours
                 if (lower.includes('hour') || lower.includes('open') || lower.includes('time') || lower.includes('close')) {
                     return "The library is open from 8:00 AM to 10:00 PM on weekdays (Mon-Fri) and 9:00 AM to 5:00 PM on weekends. During exam weeks, we extend hours until 12:00 AM.";
                 }
-                
-                // WiFi
                 if (lower.includes('wifi') || lower.includes('internet') || lower.includes('connect')) {
                     return "Free WiFi is available throughout the library. Network Name: 'UiTM-Student'. Use your student ID and portal password to login.";
                 }
-                
-                // Default fallback
                 return "I'm not sure about that specific detail, but I can help you with Searching Books, Room Booking, Digital ID, and Fines. What would you like to know?";
              };
 
@@ -1305,8 +1254,6 @@
                  const userMsg = input;
                  setMessages(prev => [...prev, {text: userMsg, from: 'user'}]);
                  setInput("");
-                 
-                 // Smart Response Delay
                  setTimeout(() => {
                      const botResponse = generateResponse(userMsg);
                      setMessages(prev => [...prev, {text: botResponse, from: 'bot'}]);
@@ -1352,21 +1299,14 @@
             const [user, setUser] = useState(null);
             const [activeTab, setActiveTab] = useState('dashboard');
             const [query, setQuery] = useState('');
-            // Use SourceCategory Enum for state
             const [activeSource, setActiveSource] = useState(SourceCategory.ALL);
             const [activeGenre, setActiveGenre] = useState(Genre.ALL);
-            
-            // Refactored BorrowedBooks to store Object with loan details instead of just Set of IDs
-            // Structure: { [bookId]: { borrowDate, dueDate, courseCode } }
             const [borrowedBooks, setBorrowedBooks] = useState({});
-            
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            
-            // App State
             const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
             const [theme, setTheme] = useState('dark');
             const [showNotifPanel, setShowNotifPanel] = useState(false);
-            const [totalFines, setTotalFines] = useState(15.00); // Demo default fine
+            const [totalFines, setTotalFines] = useState(0); 
 
             // Modal States
             const [renewModalOpen, setRenewModalOpen] = useState(false);
@@ -1379,8 +1319,10 @@
             // Data States
             const [onlineBooks, setOnlineBooks] = useState([]);
             const [notifications, setNotifications] = useState([]);
-            // Notification History (Persistent)
             const [allNotifications, setAllNotifications] = useState([]);
+            
+            // NEW: Student Fines State
+            const [allStudentFines, setAllStudentFines] = useState({});
 
             const [rooms, setRooms] = useState([
                 { id: 1, name: 'Discussion Room 1', capacity: 4, status: 'Available' },
@@ -1390,7 +1332,20 @@
                 { id: 5, name: 'Studio Room', capacity: 10, status: 'Available' }
             ]);
 
-            // Theme Effect
+            // Initialize Random Fines for Students
+            useEffect(() => {
+                const fines = {};
+                Object.keys(studentDatabase).forEach(id => {
+                    // 30% chance of having a fine
+                    if (Math.random() < 0.3) {
+                        fines[id] = (Math.floor(Math.random() * 5) + 1) * 5; // Fines: 5, 10, 15, 20, 25
+                    } else {
+                        fines[id] = 0;
+                    }
+                });
+                setAllStudentFines(fines);
+            }, []);
+
             useEffect(() => {
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
@@ -1399,7 +1354,6 @@
                 }
             }, [theme]);
             
-            // Network Listener
             useEffect(() => {
                 const handleOnline = () => { setIsOnline(true); addNotification("You are back Online"); };
                 const handleOffline = () => { setIsOnline(false); addNotification("You are now Offline"); };
@@ -1424,6 +1378,15 @@
 
             const handleLogin = (u) => {
                 setUser(u);
+                
+                // Set the fine for the logged-in student based on the generated data
+                if (u.role === 'Student') {
+                    const myFine = allStudentFines[u.studentId] || 0;
+                    setTotalFines(myFine);
+                } else {
+                    setTotalFines(0); // Lecturers don't have fines
+                }
+                
                 addNotification("Welcome to PTAR Nexus!");
             };
             const handleLogout = () => setUser(null);
@@ -1431,19 +1394,14 @@
             const addNotification = (msg) => {
                 const id = Date.now();
                 const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                // Temporary Toast
                 setNotifications(prev => [...prev, { id, msg }]);
-                // Persistent History
                 setAllNotifications(prev => [{ msg, time }, ...prev]);
-                
-                // Auto-dismiss after 3 seconds
                 setTimeout(() => {
                     setNotifications(prev => prev.filter(n => n.id !== id));
                 }, 3000);
             };
             
             const handleScanSuccess = () => {
-                const scanTime = new Date().toLocaleString();
                 addNotification("Welcome to PTAR Library UiTM Samarahan 1");
             };
 
@@ -1453,13 +1411,11 @@
             useEffect(() => {
                 const controller = new AbortController();
                 const fetchBooks = async () => {
-                    if (!isOnline) return; // Don't fetch if offline
+                    if (!isOnline) return; 
                     try {
                         let searchTerm = query;
-                        // If no specific query is entered, we use the active genre to fetch relevant books
                         if (!searchTerm) {
                             if (activeGenre === Genre.ALL) {
-                                // Default broad search if ALL is selected
                                 searchTerm = 'trending'; 
                             } else {
                                 switch(activeGenre) {
@@ -1475,7 +1431,6 @@
                             }
                         }
                         
-                        // Fetching...
                         const res = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(searchTerm)}&limit=16`, {
                             signal: controller.signal
                         });
@@ -1489,27 +1444,21 @@
                             author: doc.author_name?.[0] || 'Unknown',
                             year: doc.first_publish_year || 'N/A',
                             type: ResourceType.EBOOK,
-                            source: SourceCategory.GLOBAL, // Explicitly tag as GLOBAL
+                            source: SourceCategory.GLOBAL, 
                             genre: activeGenre, 
                             coverImage: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : GENERIC_COVER,
-                            // Improved Summary Fallback
                             summary: doc.first_sentence?.[0] || `An edition of ${doc.title} (${doc.first_publish_year}). Access this global resource online via Open Library.`,
-                            // GENERATED URL FOR DIRECT ACCESS
                             url: `https://openlibrary.org${doc.key}`
                         }));
                         setOnlineBooks(mapped);
                     } catch(e) { 
                         if (e.name !== 'AbortError') {
-                            // Silently fail or log for debug
                             console.log("Fetch failed or cancelled");
-                            // Don't clear online books entirely on error to prevent flashing, but could handle more gracefully
                         }
                     }
                 };
                 
-                // Fetch on query change, genre change, or if we switched to ALL/Search tab
-                // Also trigger initially or when source changes
-                if (true) { // Always try to keep list populated
+                if (true) { 
                      const timeout = setTimeout(fetchBooks, 500);
                      return () => {
                          clearTimeout(timeout);
@@ -1526,12 +1475,10 @@
             };
 
             const toggleBorrow = (book) => {
-                // Now opens the Modal instead of instant toggle
                 handleBookClick(book);
             };
             
             const handleBorrow = (book, details) => {
-                // Update borrowedBooks state with details
                 setBorrowedBooks(prev => ({
                     ...prev,
                     [book.id]: {
@@ -1549,7 +1496,7 @@
                     ...prev,
                     [book.id]: {
                         ...prev[book.id],
-                        dueDate: getISODate(7) // Extend by 7 days from today simplistically
+                        dueDate: getISODate(7) 
                     }
                 }));
                 addNotification(`Renewed: ${book.title}`);
@@ -1566,7 +1513,14 @@
             
             const handlePayFines = () => {
                 setTotalFines(0);
-                addNotification("Payment of RM 15.00 successful.");
+                // Also update the master record for this student
+                if (user && user.role === 'Student') {
+                    setAllStudentFines(prev => ({
+                        ...prev,
+                        [user.studentId]: 0
+                    }));
+                }
+                addNotification("Fine payment successful.");
             };
 
             const handleRoomClick = (room) => {
@@ -1582,7 +1536,7 @@
                 setRooms(prev => prev.map(r => r.id === room.id ? {...r, status: 'Occupied'} : r));
                 setBookingModalOpen(false);
                 addNotification(`Booked ${room.name} for ${slot}`);
-                setSelectedRoom(null); // Clear selected room
+                setSelectedRoom(null); 
             };
 
             const handleFeedbackSubmit = (type, desc) => {
@@ -1592,10 +1546,8 @@
 
             if (!user) return <LoginScreen onLogin={handleLogin} />;
 
-            // Merge Local & Online for display
             const allResources = [...localPhysicalInventory, ...localDigitalInventory, ...(isOnline ? onlineBooks : [])];
             
-            // Source Filter Definition - Rearranged as requested
             const sourceFilters = [
                 { id: SourceCategory.ALL, label: 'All Sources', icon: 'fa-layer-group' },
                 { id: SourceCategory.UITM_PHYSICAL, label: 'UiTM Physical Collection', icon: 'fa-book' },
@@ -1605,14 +1557,10 @@
 
             const displayBooks = allResources.filter(b => {
                     const matchQuery = !query || b.title.toLowerCase().includes(query.toLowerCase());
-                    
-                    // Robust Source Filtering
                     let matchSource = false;
                     if (activeSource === SourceCategory.ALL) matchSource = true;
                     else if (activeSource === b.source) matchSource = true;
-
                     const matchGenre = activeGenre === Genre.ALL || b.genre === activeGenre;
-                    
                     return matchQuery && matchSource && matchGenre;
             });
 
@@ -1642,7 +1590,6 @@
                                     <i className={`fa-solid ${item.icon} w-6`}></i> {item.label}
                                 </button>
                             ))}
-                            {/* Feedback Button in Sidebar */}
                              <button onClick={() => { setFeedbackOpen(true); setMobileMenuOpen(false); }} className={`w-full flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white hover:bg-purple-50 dark:hover:bg-white/5`}>
                                 <i className={`fa-solid fa-comment-dots w-6`}></i> Feedback
                             </button>
@@ -1654,7 +1601,6 @@
 
                     {/* Main Content */}
                     <main className="flex-1 flex flex-col relative overflow-hidden w-full">
-                        {/* Background Effects */}
                         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-purple-900/5 dark:from-purple-900/10 to-transparent pointer-events-none"></div>
                         
                         <Header 
@@ -1675,7 +1621,6 @@
                             {/* Dashboard View */}
                             {activeTab === 'dashboard' && (
                                 <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 animate-fade-in">
-                                    {/* Widgets Row - Responsive Grid */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 lg:h-96">
                                         <div className="lg:col-span-3 h-64 md:h-full">
                                             <DigitalIDWidget 
@@ -1687,13 +1632,10 @@
                                         <div className="lg:col-span-5 h-80 md:h-full"><SmartBookingWidget rooms={rooms} onBookClick={handleRoomClick} /></div>
                                         <div className="md:col-span-2 lg:col-span-4 h-64 md:h-full"><AnalyticsWidget /></div>
                                     </div>
-
-                                    {/* NEW: Trending & News Row */}
                                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 h-auto lg:h-72">
                                         <div className="lg:col-span-8 h-64 lg:h-full"><TrendingBooksWidget onBookClick={handleBookClick}/></div>
                                         <div className="lg:col-span-4 h-64 lg:h-full"><NewsFeedWidget /></div>
                                     </div>
-                                    
                                 </div>
                             )}
 
@@ -1702,13 +1644,11 @@
                                     <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-2">Search Resources</h2>
                                     <p className="text-slate-500 dark:text-slate-400 text-xs md:text-sm mb-6">Access Open Library & Physical Resources.</p>
                                     
-                                    {/* Search Input Moved Here */}
                                     <div className="relative mb-6">
                                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i className="fa-solid fa-magnifying-glass text-slate-400 dark:text-slate-500"></i></div>
                                         <input type="text" value={query} onChange={e => setQuery(e.target.value)} className="w-full bg-white dark:bg-[#1e2030]/80 border border-gray-200 dark:border-white/10 rounded-xl py-3 md:py-4 pl-12 pr-4 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-all shadow-xl backdrop-blur-sm focus:ring-1 focus:ring-purple-500/50 text-sm md:text-base" placeholder="Search by Title, Author, or Call Number..." />
                                     </div>
 
-                                    {/* Source Filters - Updated Structure & Reset Logic */}
                                     <div className="flex flex-wrap gap-2 md:gap-3 mb-4">
                                             {sourceFilters.map((s, i) => {
                                                 const isActive = activeSource === s.id;
@@ -1726,7 +1666,6 @@
                                             })}
                                     </div>
                                     
-                                    {/* Genre Filters - Modified to allow "Reset" via All Resources */}
                                     <div className="flex flex-nowrap overflow-x-auto gap-2 mb-8 pb-2 scrollbar-hide">
                                         {Object.values(Genre).map(g => (
                                             <button 
@@ -1734,7 +1673,6 @@
                                                 onClick={() => {
                                                     setActiveGenre(g);
                                                     if(g === Genre.ALL) {
-                                                        // Explicitly clear query to reset the view when "All Resources" is clicked
                                                         setQuery(''); 
                                                     }
                                                 }} 
@@ -1796,6 +1734,7 @@
                         onClose={() => setProfileOpen(false)} 
                         totalFines={totalFines}
                         onPayFines={handlePayFines}
+                        allStudentFines={allStudentFines}
                     />
                     <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={handleFeedbackSubmit} />
                     
