@@ -177,7 +177,7 @@
             "2024299304": "LORIA MANYIE ANAK NAWONG",
             "2024206946": "LUQMAN NURHAKIM OMARSHARIFF",
             "2024419516": "MOHAMAD ZAINORAZIEM BIN ZAINAL",
-            "2024436008": "MOHAMMAD SYAHRIL AZLIE",
+            "2024436008": "MOHammad SYAHRIL AZLIE",
             "2024681454": "MOHD AMIRUL HAFIZ BIN ILAH",
             "2024282012": "MUHAMAD HAZIM AKMAL BIN JAMAN",
             "2024411696": "MUHAMMAD AFIQ HAIQAL BIN MOHD ROSDI",
@@ -333,7 +333,14 @@
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i className={`fa-solid ${userType === 'student' ? 'fa-id-card' : 'fa-user-tie'} text-slate-400 dark:text-slate-500`}></i>
                                     </div>
-                                    <input type="text" required value={id} onChange={(e) => setId(e.target.value)} className="w-full bg-slate-50 dark:bg-[#232433] border border-gray-200 dark:border-white/5 rounded-xl py-3 pl-10 pr-4 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors" placeholder={userType === 'student' ? "Enter Student ID" : "241791"} />
+                                    <input 
+                                        type="text" 
+                                        required 
+                                        value={id} 
+                                        onChange={(e) => setId(e.target.value)} 
+                                        className="w-full bg-slate-50 dark:bg-[#232433] border border-gray-200 dark:border-white/5 rounded-xl py-3 pl-10 pr-4 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-colors" 
+                                        placeholder={userType === 'student' ? "Enter Student ID" : "Enter Lecturer ID / Staff ID"} 
+                                    />
                                 </div>
                             </div>
                             {error && (
@@ -1121,8 +1128,18 @@
         };
 
         // 10. Profile Modal - UPDATED HISTORY
-        const ProfileModal = ({ user, isOpen, onClose }) => {
+        const ProfileModal = ({ user, isOpen, onClose, totalFines, onPayFines }) => {
             if(!isOpen) return null;
+            const [isPaying, setIsPaying] = useState(false);
+
+            const handlePayment = () => {
+                setIsPaying(true);
+                setTimeout(() => {
+                    onPayFines();
+                    setIsPaying(false);
+                }, 1500);
+            };
+
             return (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
@@ -1148,6 +1165,35 @@
                                     )}
                                 </div>
                              </div>
+
+                             {/* Financial Status Section (Students Only) */}
+                             {user.role === 'Student' && (
+                                 <div className="mb-8">
+                                    <h4 className="text-slate-800 dark:text-white font-bold mb-4 uppercase tracking-wider text-xs border-b border-gray-200 dark:border-white/10 pb-2">Financial Status</h4>
+                                    <div className="bg-slate-50 dark:bg-[#232433] rounded-xl p-4 border border-gray-200 dark:border-white/5 flex items-center justify-between">
+                                        <div>
+                                            <p className="text-[10px] text-slate-500 uppercase font-bold mb-1">Outstanding Fines</p>
+                                            <h3 className={`text-xl font-mono font-bold ${totalFines > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                                                RM {totalFines.toFixed(2)}
+                                            </h3>
+                                            {totalFines > 0 && <p className="text-[10px] text-red-400 mt-1"><i className="fa-solid fa-circle-exclamation"></i> Payment Required</p>}
+                                        </div>
+                                        {totalFines > 0 ? (
+                                            <button
+                                                onClick={handlePayment}
+                                                disabled={isPaying}
+                                                className="px-6 py-2 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-lg shadow-lg shadow-red-500/30 hover:scale-105 transition-transform flex items-center gap-2"
+                                            >
+                                                {isPaying ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-regular fa-credit-card"></i> Pay Now</>}
+                                            </button>
+                                        ) : (
+                                            <div className="px-4 py-2 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold rounded-lg border border-green-500/20 flex items-center gap-2">
+                                                 <i className="fa-solid fa-check-circle"></i> No Dues
+                                            </div>
+                                        )}
+                                    </div>
+                                 </div>
+                             )}
                              
                              {/* Recent History Section - UPDATED */}
                              <div>
@@ -1320,6 +1366,7 @@
             const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
             const [theme, setTheme] = useState('dark');
             const [showNotifPanel, setShowNotifPanel] = useState(false);
+            const [totalFines, setTotalFines] = useState(15.00); // Demo default fine
 
             // Modal States
             const [renewModalOpen, setRenewModalOpen] = useState(false);
@@ -1515,6 +1562,11 @@
                 setBorrowedBooks(newBorrowed);
                 addNotification(`Returned: ${book.title}`);
                 setRenewModalOpen(false);
+            };
+            
+            const handlePayFines = () => {
+                setTotalFines(0);
+                addNotification("Payment of RM 15.00 successful.");
             };
 
             const handleRoomClick = (room) => {
@@ -1738,7 +1790,13 @@
                         addNotification={addNotification}
                     />
                     <BookingDetailModal room={selectedRoom} user={user} isOpen={bookingModalOpen} onClose={() => { setBookingModalOpen(false); setSelectedRoom(null); }} onConfirm={confirmBooking} />
-                    <ProfileModal user={user} isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
+                    <ProfileModal 
+                        user={user} 
+                        isOpen={profileOpen} 
+                        onClose={() => setProfileOpen(false)} 
+                        totalFines={totalFines}
+                        onPayFines={handlePayFines}
+                    />
                     <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={handleFeedbackSubmit} />
                     
                     {/* Notifications Overlay */}
